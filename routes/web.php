@@ -48,6 +48,10 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::controller(SubCategoryController::class)->group(function () {
         Route::get('/admin/all-subcategory', 'Index')->name("allsubcategory");
         Route::get('/admin/add-subcategory', 'AddSubCategory')->name("addsubcategory");
+        Route::post('/admin/store-subcategory', 'StoreSubCategory')->name('storesubcategory');
+        route::get('/admin/edit-subcategory/{id}', 'EditSubCategory')->name('editsubcategory');
+        Route::post('/admin/update-subcategory', 'UpdateSubCategory')->name('updatesubcategory');
+        Route::get('/admin/delete-subcategory/{id}', 'DeleteSubCategory')->name('deletesubcategory');
     });
     Route::controller(ProductController::class)->group(function () {
         Route::get('/admin/all-products', 'Index')->name("allproducts");
