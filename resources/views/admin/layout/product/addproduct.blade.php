@@ -12,18 +12,28 @@
                     <small class="text-muted float-end">Input Information</small>
                 </div>
                 <div class="card-body">
-                    <form action="" method="POST">
+                     @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <form action="{{ route('storeproduct') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="basic-default-name">Product Name</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="Product_name" name="Product_name"
+                                <input type="text" class="form-control" id="product_name" name="product_name"
                                     placeholder="Electronic" />
                             </div>
                         </div>
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="basic-default-name">Product Price</label>
                             <div class="col-sm-10">
-                                <input type="number" class="form-control" id="Product_name" name="product_name"
+                                <input type="number" class="form-control" id="product_price" name="product_price"
                                     placeholder="12" />
                             </div>
                         </div>
@@ -47,22 +57,22 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="basic-default-name">Select Category</label>
                             <div class="col-sm-10">
-                                <select id="product" name="product" class="form-select">
-                                    <option>Default select</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                <select id="product_category_id" name="product_category_id" class="form-select">
+                                    <option>Select Product Category</option>
+                                    @foreach ($categories as $category )
+                                    <option value="{{ $category->id }}"">{{ $category->category_name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="basic-default-name">Select Sub Category</label>
                             <div class="col-sm-10">
-                                <select id="product" name="product" class="form-select">
-                                    <option>Default select</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                <select id="product_subcategory_id" name="product_subcategory_id" class="form-select">
+                                    <option>Select Product Subcategory</option>
+                                      @foreach ($subcategories as $subcategory )
+                                    <option value="{{ $subcategory->id }}">{{ $subcategory->subcategory_name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -74,9 +84,9 @@
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="basic-default-name">Product Image</label>
+                            <label class="col-sm-2 col-form-label" for="basic-default-name">Upload Product Image</label>
                             <div class="col-sm-10">
-                                <input class="form-control" type="file" id="formFile" />
+                                <input class="form-control" type="file" id="product_img" name="product_img" />
                             </div>
                         </div>
                         <div class="row justify-content-end">

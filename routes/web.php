@@ -7,7 +7,6 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +55,10 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::controller(ProductController::class)->group(function () {
         Route::get('/admin/all-products', 'Index')->name("allproducts");
         Route::get('/admin/add-product', 'AddProduct')->name("addproduct");
+        Route::post('/admin/store-product', 'StoreProduct')->name('storeproduct');
+        route::get('/admin/edit-product/{id}', 'EditProduct')->name('editproduct');
+        Route::post('/admin/update-product', 'UpdateProduct')->name('updateproduct');
+        Route::get('/admin/delete-product/{id}', 'DeleteProduct')->name('deleteproduct');
     });
     Route::controller(OrderController::class)->group(function () {
         Route::get('/admin/pending-orders', 'Index')->name("pendingorders");

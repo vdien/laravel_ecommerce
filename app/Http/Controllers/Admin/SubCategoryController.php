@@ -53,7 +53,9 @@ class SubCategoryController extends Controller
         $category_name = Category::where('id', $category_id)->value('category_name');
         $subcategory_id = $request->subcategory_id;
         $request->validate([
-            'subcategory_name' => 'required|unique:subcategories'
+            'subcategory_name' => 'required|unique:subcategories',
+            'category_id' => 'required',
+            'category_name' => 'required'
         ]);
 
         Subcategory::findOrFail($subcategory_id)->update([
