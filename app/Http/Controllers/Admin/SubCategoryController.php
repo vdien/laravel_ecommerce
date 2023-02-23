@@ -62,7 +62,7 @@ class SubCategoryController extends Controller
             'category_id' => $category_id,
             'category_name' => $category_name,
             'subcategory_name' => $request->subcategory_name,
-            'slug' => strtolower(str_replace('', '-', $request->subcategory_name))
+            'slug' => strtolower(str_replace(' ', '-', $request->subcategory_name))
         ]);
         return redirect()->route('allsubcategory')->with('message', 'Category Update Successfully!');
     }

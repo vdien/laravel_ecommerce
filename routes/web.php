@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SubCategoryController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,10 +21,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
+Route::controller(HomeController::class)->group(function () {
+    Route::get('/', 'Index')->name('Home');
+});
+Route::controller(ClientController::class)->group(function () {
+    Route::get('/shop', 'Shop')->name('shop');
+    Route::get('/shop/category/{id}/{slug}', 'CategoryPage')->name('category');
+    Route::get('/shop/subcategory/{id}/{slug}', 'SubCategoryPage')->name('subcategory');
+    Route::get('/single-product', 'SingleProduct')->name('singleproduct');
+    Route::get('/add-to-cart', 'AddToCart')->name('addtocart');
+    Route::get('/checkout', 'Checkout')->name('checkout');
+    Route::get('/user-profile', 'UserProfile')->name('userprofile');
+    Route::get('/todays-deal;', 'TodaysDeal')->name('todaysdeal');
+    Route::get('/customer-service', 'CustomerService')->name('customerservice');
+});
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified', "role:user"])->name('dashboard');
@@ -32,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
 Route::middleware('auth', 'role:admin')->group(function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/admin/dashboard', 'Index')->name("admindashboard");
@@ -66,4 +80,11 @@ Route::middleware('auth', 'role:admin')->group(function () {
         Route::get('/admin/pending-orders', 'Index')->name("pendingorders");
     });
 });
+Route::middleware('auth', 'role:admin')->group(
+    function () {
+        Route::controller(DashboardController::class)->group(function () {
+            Route::get('/admin/dashboard', 'Index')->name("admindashboard");
+        });
+    }
+);
 require __DIR__ . '/auth.php';
