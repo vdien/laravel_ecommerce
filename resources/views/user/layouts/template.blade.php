@@ -17,7 +17,6 @@
     <!-- Core Style CSS -->
     <link rel="stylesheet" href="{{ asset('home/css/core-style.css') }}">
     <link rel="stylesheet" href="{{ asset('home/style.css') }}">
-
 </head>
 
 <body>
@@ -27,7 +26,7 @@
             <!-- Classy Menu -->
             <nav class="classy-navbar" id="essenceNav">
                 <!-- Logo -->
-                <a class="nav-brand" href="index.html"><img src="{{ asset('home/img/core-img/logo.png') }}"
+                <a class="nav-brand" href="{{ route('Home') }}"><img src="{{ asset('home/img/core-img/logo.png') }}"
                         alt=""></a>
                 <!-- Navbar Toggler -->
                 <div class="classy-navbar-toggler">
@@ -49,18 +48,22 @@
                                     @endphp
                                     @foreach ($categories as $category)
                                         <ul class="single-mega cn-col-4">
-                                            <li class="title"><a href="{{ route('category',[$category->id,$category->slug]) }}">{{ $category->category_name }}</a></li>
-
+                                            <li class="title"><a
+                                                    href="{{ route('category', [$category->id, $category->slug]) }}">{{ $category->category_name }}</a>
+                                            </li>
                                             @php
-                                                $subcategories = App\Models\Subcategory::where('id', $category->id)
+                                                $subcategories = App\Models\Subcategory::where('category_id', $category->id)
                                                     ->latest()
                                                     ->get();
                                             @endphp
                                             @foreach ($subcategories as $subcategory)
+                                                <li><a
+                                                        href="{{ route('subcategory', [$subcategory->id, $subcategory->slug]) }}">{{ $subcategory->subcategory_name }}</a>
+                                                </li>
                                             @endforeach
-                                            <li><a href="{{ route('subcategory',[$subcategory->id,$subcategory->slug]) }}">{{ $subcategory->subcategory_name }}</a></li>
                                         </ul>
                                     @endforeach
+
                                     <div class="single-mega cn-col-4">
                                         <img src="img/bg-img/bg-6.jpg" alt="">
                                     </div>
@@ -69,7 +72,7 @@
                             <li><a href="#">Pages</a>
                                 <ul class="dropdown">
                                     <li><a href="index.html">Home</a></li>
-                                    <li><a href="{{route('shop')}}">Shop</a></li>
+                                    <li><a href="{{ route('shop') }}">Shop</a></li>
                                     <li><a href="single-product-details.html">Product Details</a></li>
                                     <li><a href="checkout.html">Checkout</a></li>
                                     <li><a href="blog.html">Blog</a></li>
@@ -101,7 +104,8 @@
                 </div>
                 <!-- User Login Info -->
                 <div class="user-login-info">
-                    <a href="#"><img src="{{ asset('home/img/core-img/user.svg') }}" alt=""></a>
+                    <a href="{{ route('profile.edit') }}"><img src="{{ asset('home/img/core-img/user.svg') }}"
+                            alt=""></a>
                 </div>
                 <!-- Cart Area -->
                 <div class="cart-area">

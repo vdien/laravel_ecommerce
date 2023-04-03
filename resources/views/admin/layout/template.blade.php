@@ -234,6 +234,14 @@
                             <!--/ User -->
                         </ul>
                     </div>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            {{ __('Log Out') }}
+                        </button>
+                    </form>
                 </nav>
 
                 <!-- / Navbar -->
@@ -272,7 +280,7 @@
     <script src="{{ asset('dashboard/assets/js/dashboards-analytics.js') }}"></script>
 
     <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="{{ asset('dashboard/assets/vendor/js/helpers.js') }}"></script>
 </body>
 
 </html>

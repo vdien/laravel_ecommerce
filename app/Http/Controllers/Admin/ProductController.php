@@ -45,7 +45,7 @@ class ProductController extends Controller
 
         $category_name = Category::where('id', $category_id)->value('category_name');
         $subcategory_name = Subcategory::where('id', $subcategory_id)->value('subcategory_name');
-        Product::insert([
+        Product::create([
             'product_name' => $request->product_name,
             'product_short_des' => $request->product_short_description,
             'product_long_des' => $request->product_long_description,
@@ -56,7 +56,7 @@ class ProductController extends Controller
             'product_subcategory_id' => $subcategory_id,
             'product_img' => $img_url,
             'quantity' => $request->product_quantity,
-            'slug' => strtolower(str_replace('', '-', $request->subcategory_name)),
+            'slug' => strtolower(str_replace(' ', '-', $request->product_name)),
         ]);
         Category::where('id', $category_id)->increment('product_count', 1);
         Subcategory::where('id', $subcategory_id)->increment('product_count', 1);
@@ -111,7 +111,7 @@ class ProductController extends Controller
             'product_category_id' => $category_id,
             'product_subcategory_id' => $subcategory_id,
             'quantity' => $request->product_quantity,
-            'slug' => strtolower(str_replace('', '-', $request->subcategory_name)),
+            'slug' => strtolower(str_replace(' ', '-', $request->product_name)),
         ]);
         return redirect(route('allproducts'))->with('message', 'Product Updated Successfully!');
     }
