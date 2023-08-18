@@ -101,7 +101,7 @@
                         </div>
                         <div class="row">
                             <!-- Single Product -->
-                            @yield('product')
+                            @yield('shop-content')
                         </div>
                     </div>
                 </div>

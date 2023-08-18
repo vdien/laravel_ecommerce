@@ -32,7 +32,7 @@ class ProductController extends Controller
             'product_short_description' => 'required',
             'product_category_id' => 'required',
             'product_subcategory_id' => 'required',
-            'product_img' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'product_img' => 'required|image|max:2048',
         ]);
 
         $image = $request->product_img;
@@ -72,7 +72,7 @@ class ProductController extends Controller
     {
         $request->validate(
             [
-                'product_img' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'product_img' => 'required|image|max:2048',
             ]
         );
         $id = $request->product_id;

@@ -1,5 +1,4 @@
-@extends('user.layouts.template')
-
+@extends('user.layouts.templateshop')
 @section('main-content')
     <!-- ##### Welcome Area Start ##### -->
     <section class="welcome_area bg-img background-overlay"
@@ -91,8 +90,10 @@
                     <div class="popular-products-slides owl-carousel">
                         @foreach ($popular_product as $product)
                             <!-- Single Product -->
+                           
                             <div class="single-product-wrapper">
                                 <!-- Product Image -->
+                                <a href="{{ route('singleproduct', [$product->id, $product->slug]) }}">
                                 <div class="product-img">
                                     <img src="{{ asset($product->product_img) }}" alt="">
                                     <!-- Hover Thumb -->
@@ -106,25 +107,17 @@
                                 <div class="product-description">
                                     <span>{{ $product->product_subcategory_name }}</span>
 
-                                    <a href="{{ route('singleproduct', [$product->id, $product->slug]) }}">
+                                    
                                         <h6>{{ $product->product_name }}</h6>
-                                    </a>
+                                
                                     <p class="product-price">{{ $product->price }}</p>
 
                                     <!-- Hover Content -->
-                                    <div class="hover-content">
-                                        <!-- Add to Cart -->
-                                        <form class="cart-form clearfix"
-                                            action="{{ route('addproducttocart', $product->id) }}" method="POST">
-                                            <input type="hidden" value="{{ $product->id }}" name="product_id">
-                                            @csrf
-
-                                            <input type="submit" name="addtocart" class="btn essence-btn"
-                                                value="Add to cart" />
-                                        </form>
-                                    </div>
+                                    
                                 </div>
+                            </a>
                             </div>
+                     
                         @endforeach
                     </div>
                 </div>

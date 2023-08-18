@@ -27,7 +27,7 @@
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="basic-default-name">Previous Product Image</label>
                             <div class="col-sm-10">
-                                <img class="rounded mx-auto d-block"src="{{ asset($product_info->product_img) }}" alt="">
+                                <img class="rounded mx-auto d-block img-fluid  "style="width:200px" src="{{ asset($product_info->product_img) }}" alt="">
                             </div>
                         </div>
                         <div class="row mb-3">

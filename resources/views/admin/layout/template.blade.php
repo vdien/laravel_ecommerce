@@ -65,8 +65,8 @@
 
                 <ul class="menu-inner py-1">
                     <!-- Dashboard -->
-                    <li class="menu-item active">
-                        <a href="{{ route('admindashboard') }}" class="menu-link">
+                    <li class="menu-item ">
+                        <a href="{{ route('admindashboard') }}" class="menu-link ">
                             <i class="menu-icon tf-icons bx bx-home-circle"></i>
                             <div data-i18n="Analytics">Dashboard</div>
                         </a>
@@ -174,7 +174,7 @@
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
                                     data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        <img src="{{ asset('dashboard/assets/') }}img/avatars/1.png" alt
+                                        <img src="{{ asset('dashboard/assets') }}/img/avatars/1.png" alt
                                             class="w-px-40 h-auto rounded-circle" />
                                     </div>
                                 </a>
@@ -184,7 +184,7 @@
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div class="avatar avatar-online">
-                                                        <img src="{{ asset('dashboard/assets/') }}img/avatars/1.png"
+                                                        <img src="{{ asset('dashboard/assets') }}/img/avatars/1.png"
                                                             alt class="w-px-40 h-auto rounded-circle" />
                                                     </div>
                                                 </div>
@@ -224,10 +224,18 @@
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="auth-login-basic.html">
-                                            <i class="bx bx-power-off me-2"></i>
-                                            <span class="align-middle">Log Out</span>
-                                        </a>
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit"
+                                                class="dropdown-item">
+                                               
+                                               
+                                                    <i class="bx bx-power-off me-2"></i>
+                                                    <span class="align-middle">Log Out</span>
+                                               
+                                            </button>
+                                        </form>
+                                       
                                     </li>
                                 </ul>
                             </li>
@@ -235,13 +243,7 @@
                         </ul>
                     </div>
 
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit"
-                            class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            {{ __('Log Out') }}
-                        </button>
-                    </form>
+                    
                 </nav>
 
                 <!-- / Navbar -->
@@ -281,6 +283,7 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script src="{{ asset('dashboard/assets/vendor/js/helpers.js') }}"></script>
+ 
 </body>
 
 </html>

@@ -4,10 +4,11 @@
     <h2>Shop</h2>
 @endsection
 <!-- ##### Breadcumb Area End ##### -->
-@section('product')
+@section('shop-content')
     <!-- ##### Shop Grid Area Start ##### -->
     @foreach ($products as $product)
         <div class="col-12 col-sm-6 col-lg-4">
+            <a href="{{ route('singleproduct', [$product->id, $product->slug]) }}">
             <div class="single-product-wrapper">
                 <!-- Product Image -->
                 <div class="product-img">
@@ -27,24 +28,15 @@
 
                 <!-- Product Description -->
                 <div class="product-description">
-                    <span>topshop</span>
+                    <span>{{$product->product_subcategory_name}}</span>
                     <a href="single-product-details.html">
-                        <h6>Knot Front Mini Dress</h6>
+                        <h6>{{$product->product_name}}</h6>
                     </a>
-                    <p class="product-price"><span class="old-price">$75.00</span> $55.00</p>
+                    <p class="product-price"><span class="old-price">$75.00</span> {{$product->price}}.00</p>
 
-                    <!-- Hover Content -->
-                    <div class="hover-content">
-                        <!-- Add to Cart -->
-                        <form class="cart-form clearfix" action="{{ route('addproducttocart', $product->id) }}"
-                            method="POST">
-                            <input type="hidden" value="{{ $product->id }}" name="product_id">
-                            @csrf
-                            <input type="submit" name="addtocart" class="btn essence-btn" value="Add to cart" />
-                        </form>
-                    </div>
                 </div>
             </div>
+        </a>
         </div>
     @endforeach
     </div>

@@ -33,17 +33,10 @@ class ClientController extends Controller
         $product_info = Product::findOrFail($id);
         return view('user.product', compact('product_info', 'popular_product'));
     }
-    public function AddToCart()
+    
+    public function Cart()
     {
-        return view('user.addtocart');
-    }
-    public function AddProductToCart()
-    {
-        return view('user.addtocart');
-    }
-    public function Checkout()
-    {
-        return view('user.checkout');
+        return view('user.cart');
     }
     public function UserProfile()
     {
