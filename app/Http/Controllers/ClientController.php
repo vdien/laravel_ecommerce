@@ -38,6 +38,10 @@ class ClientController extends Controller
     {
         return view('user.cart');
     }
+    public function Checkout()
+    {
+        return view('user.checkout');
+    }
     public function UserProfile()
     {
         return view('user.userprofile');

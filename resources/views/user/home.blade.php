@@ -2,20 +2,20 @@
 @section('main-content')
     <!-- ##### Welcome Area Start ##### -->
     <section class="welcome_area bg-img background-overlay"
-        style="background-image: url({{ asset('home/img/bg-img/bg-1.jpg') }});">
-        <div class="container h-100">
+        style="background-image: url({{ asset('home/img/bg-img/bgjd4.jpg') }});">
+        {{-- <div class="container h-100">
             <div class="row h-100 align-items-center">
                 <div class="col-12">
                     <div class="hero-content">
-                        <h6>asoss</h6>
+                        <h6>Hello</h6>
                         <h2>New Collection</h2>
                         <a href="#" class="btn essence-btn">view collection</a>
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </section>
-    <!-- ##### Top Catagory Area Start ##### -->
+    {{-- <!-- ##### Top Catagory Area Start ##### -->
     <div class="top_catagory_area section-padding-80 clearfix">
         <div class="container">
             <div class="row justify-content-center">
@@ -70,7 +70,7 @@
             </div>
         </div>
     </div>
-    <!-- ##### CTA Area End ##### -->
+    <!-- ##### CTA Area End ##### --> --}}
 
     <!-- ##### New Arrivals Area Start ##### -->
     <section class="new_arrivals_area section-padding-80 clearfix">
@@ -90,34 +90,26 @@
                     <div class="popular-products-slides owl-carousel">
                         @foreach ($popular_product as $product)
                             <!-- Single Product -->
-                           
                             <div class="single-product-wrapper">
                                 <!-- Product Image -->
                                 <a href="{{ route('singleproduct', [$product->id, $product->slug]) }}">
-                                <div class="product-img">
-                                    <img src="{{ asset($product->product_img) }}" alt="">
-                                    <!-- Hover Thumb -->
-                                    <img class="hover-img" src="{{ asset($product->product_img) }}" alt="">
-                                    <!-- Favourite -->
-                                    <div class="product-favourite">
-                                        <a href="#" class="favme fa fa-heart"></a>
+                                    <div class="product-img">
+                                        <img src="{{ asset($product->product_img) }}" alt="">
+                                        <!-- Hover Thumb -->
+                                        <img class="hover-img" src="{{ asset($product->product_img) }}" alt="">
+                                        <!-- Favourite -->
+                                        <div class="product-favourite">
+                                            <a href="#" class="favme fa fa-heart"></a>
+                                        </div>
                                     </div>
-                                </div>
-                                <!-- Product Description -->
-                                <div class="product-description">
-                                    <span>{{ $product->product_subcategory_name }}</span>
-
-                                    
+                                    <!-- Product Description -->
+                                    <div class="product-description">
+                                        <span>{{ $product->product_subcategory_name }}</span>
                                         <h6>{{ $product->product_name }}</h6>
-                                
-                                    <p class="product-price">{{ $product->price }}</p>
-
-                                    <!-- Hover Content -->
-                                    
-                                </div>
-                            </a>
+                                        <p class="product-price">{{ $product->price }}</p>
+                                    </div>
+                                </a>
                             </div>
-                     
                         @endforeach
                     </div>
                 </div>

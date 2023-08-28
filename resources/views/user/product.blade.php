@@ -48,14 +48,14 @@
                     <form class="cart-form clearfix" name="add-to-cart-form" method="POST">
                         @csrf
                         <input type="hidden" value="{{ $product_info->id }}" name="product_id">
-                        <div class="select-box d-flex mt-50 mb-30">
-                            <select name="size" id="productSize" class="mr-5">
+                        <div class="select-box d-flex mt-50 mb-30 ">
+                            <select name="size" id="productSize" class="mr-5 nice-select">
                                 <option value="36">Size: 36</option>
                                 <option value="37">Size: 37</option>
                                 <option value="38">Size: 38</option>
                                 <option value="39">Size: 39</option>
                             </select>
-                            <select name="quantity" id="productColor">
+                            <select name="quantity" id="productColor" class="mr-5  nice-select">
                                 <option value="1">Quantity: 1</option>
                                 <option value="2">Quantity: 2</option>
                                 <option value="3">Quantity: 3</option>

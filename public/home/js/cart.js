@@ -18,11 +18,6 @@
             }
         });
     }
-    
-    $(document).ready(function() {
-        // Fetch cart data from the server on page load
-        fetchAndRenderCart()
-    });
     $(function () {
         $('[name=add-to-cart-form]').on('submit', function (event) {
             event.preventDefault();
@@ -232,13 +227,13 @@
     
             updateCartItemQuantity(productId, size, newQuantity);
         });
-    });
-    
-    $(document).ready(function () {
         $(document).on('click', '.remove-cart-item', function () {
             var productId = $(this).data('product-id');
             var size = $(this).data('size');
     
             removeCartItem(productId, size);
         });
+        fetchAndRenderCart()
     });
+    
+   

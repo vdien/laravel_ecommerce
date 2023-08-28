@@ -35,6 +35,8 @@ Route::controller(ClientController::class)->group(function () {
     Route::get('/user-profile', 'UserProfile')->name('userprofile');
     Route::get('/todays-deal;', 'TodaysDeal')->name('todaysdeal');
     Route::get('/customer-service', 'CustomerService')->name('customerservice');
+    Route::get('/checkout', 'Checkout')->name('checkout');
+
 });
 Route::controller(CartController::class)->group(function () {
     Route::get('/cart', 'index')->name('cart.index');
@@ -43,6 +45,9 @@ Route::controller(CartController::class)->group(function () {
     Route::get('/cart/subtotal', [CartController::class, 'calculateSubtotal'])->name('cart.subtotal');
     Route::post('/cart/update_quantity', [CartController::class, 'updateQuantity'])->name('cart.update_quantity');
     Route::post('/cart/remove', [CartController::class, 'removeCartItem'])->name('cart.remove');
+    Route::post('/cart/checkout', [CartController::class, 'processCheckout'])->name('cart.checkout');
+    Route::get('/cart/thankyou', [CartController::class, 'thankyou'])->name('cart.thanks');
+    Route::get('/findorder', [CartController::class, 'findorder'])->name('cart.findorder');
 
 });
 
@@ -50,9 +55,7 @@ Route::controller(CartController::class)->group(function () {
 
 
 Route::middleware(['auth', ])->group(function () {
-    Route::controller(ClientController::class)->group(function () {
-        
-    });
+   
 });
 Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified', "role:user"])->name('dashboard');

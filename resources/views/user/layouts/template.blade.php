@@ -14,12 +14,24 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Title  -->
     <title>Essence - Shoes Ecommerce</title>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css">
+    <script src="{{ asset('home/js/jquery/jquery-2.2.4.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
     <!-- Favicon  -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+
     <link rel="icon" href="{{ asset('home/img/core-img/favicon.ico') }}">
     <!-- Core Style CSS -->
     <link rel="stylesheet" href="{{ asset('home/css/core-style.css') }}">
     <link rel="stylesheet" href="{{ asset('home/style.css') }}">
+   <style>
+    .nice-select .list {
+    border-radius: 0px;
+    height: 200px;
+    overflow-y: auto;
+    
+}
+   </style>
 </head>
 
 <body>
@@ -138,20 +150,6 @@
             <!-- Cart List Area -->
             <div class="cart-list">
 
-                <div class="single-cart-item">
-                    <a href="#" class="product-image">
-                        <img src="img/product-img/product-3.jpg" class="cart-thumb" alt="">
-                        <!-- Cart Item Desc -->
-                        <div class="cart-item-desc">
-                            <span class="product-remove"><i class="fa fa-close" aria-hidden="true"></i></span>
-                            <span class="badge">Mango</span>
-                            <h6>Button Through Strap Mini Dress</h6>
-                            <p class="size">Size: S</p>
-                            <p class="color">Color: Red</p>
-                            <p class="price">$45.00</p>
-                        </div>
-                    </a>
-                </div>
             </div>
 
             <!-- Cart Summary -->
@@ -185,7 +183,7 @@
                     <div class="single_widget_area d-flex mb-30">
                         <!-- Logo -->
                         <div class="footer-logo mr-50">
-                            <a href="#"><img src="img/core-img/logo2.png" alt=""></a>
+                            <a href="#"><img src="{{ asset('home/img/core-img/logo2.png')}}" alt=""></a>
                         </div>
                         <!-- Footer Menu -->
                         <div class="footer_menu">
@@ -267,10 +265,11 @@
 
         </div>
     </footer>
-    <!-- ##### Footer Area End ##### -->
-
-    <!-- jQuery (Necessary for All JavaScript Plugins) -->
-    <script src="{{ asset('home/js/jquery/jquery-2.2.4.min.js') }}"></script>
+   
+ 
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+   
+      
     <!-- Popper js -->
 
     <script src="{{ asset('home/js/popper.min.js') }}"></script>
@@ -286,13 +285,18 @@
         integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('home/js/toast.js') }}"></script>
-    <script src="{{ asset('home/js/cart.js') }}"></script>
     <script>
-        var cartGet = {{ route('cart.get') }}
-        var cartAdd = {{route('cart.add')}}
-        var cartUpdateQuantity = {{route('cart.update_quantity')}}
-        var cartRemove = {{ route('cart.remove') }}
+        var cartGet = "{{ route('cart.get') }}";
+        var cartAdd = "{{route('cart.add')}}";
+        var cartUpdateQuantity = "{{route('cart.update_quantity')}}";
+        var cartRemove = "{{ route('cart.remove') }}";
+        var cartCheckout = "{{ route('cart.checkout') }}";
+        var cartThanks = "{{ route('cart.thanks') }}";
+
     </script>
+        <script src="{{ asset('home/js/cart.js') }}"></script>
+        <script src="{{ asset('home/js/checkout.js') }}"></script>
+
 </body>
 
 </html>

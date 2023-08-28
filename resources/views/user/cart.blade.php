@@ -53,7 +53,7 @@
 
 
                     </div>
-                    <a href="#" class="btn essence-btn">Check out</a>
+                    <a href="{{route('checkout')}}" class="btn essence-btn">Check out</a>
                 
                 </div>
             </div>

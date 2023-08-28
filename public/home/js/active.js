@@ -86,11 +86,11 @@
         }
     });
 
-    // :: Nice Select Active Code
-    if ($.fn.niceSelect) {
-        $('select').niceSelect();
-    }
-
+    // // :: Nice Select Active Code
+    // if ($.fn.niceSelect) {
+    //     $('select').niceSelect();
+    // }
+    
     // :: Slider Range Price Active Code
     $('.slider-range-price').each(function () {
         var min = jQuery(this).data('min');

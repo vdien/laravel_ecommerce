@@ -1,8 +1,10 @@
 <?php
 namespace App\Http\Controllers;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -144,5 +146,39 @@ class CartController extends Controller
         ]);
     }
     
+    public function processCheckout(Request $request)
+    {
+        // Validate the request data if needed
+        
+        $cartItemsData =  Session::get('cart', []);
+        
+        $subtotal = 0;
 
+        foreach ($cartItemsData as $cartItem) {
+            $subtotal += $cartItem['quantity'] * $cartItem['price'];
+        }        
+        $order = new Order([
+            'name' => $request->input('name'),
+            'phone' => $request->input('phone'),
+            'city' => $request->input('city'),
+            'district' => $request->input('district'),
+            'ward' => $request->input('ward'),
+            'address' => $request->input('address'),
+            'cart_items' => $cartItemsData,
+            'subtotal' => $subtotal,
+            'status' => "Đang chờ xác nhận"
+        ]);
+        $order->save();
+        
+        session(['cart_count' => 0]);
+        session(['cart' => []]);
+        
+        return response()->json(['success' => true]);
+    }
+    public function thankyou(){
+        return view('user.thankyou');
+    }
+    public function findorder(){
+        return view('user.findorder')
+    }
 }
