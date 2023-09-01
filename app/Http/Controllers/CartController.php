@@ -178,7 +178,16 @@ class CartController extends Controller
     public function thankyou(){
         return view('user.thankyou');
     }
-    public function findorder(){
-        return view('user.findorder')
+    public function findOrders(){
+        return view('user.findorders');
+
+    }
+    public function findOrderByPhone(Request $request)
+    {
+        $phoneNumber = $request->input('phone');
+
+        $orders = Order::where('phone', $phoneNumber)->latest()->get();
+    
+        return response()->json(['orders' => $orders]);
     }
 }

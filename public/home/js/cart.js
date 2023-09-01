@@ -129,7 +129,7 @@
     
     function updateCartItemQuantity(productId, size, newQuantity) {
         $.ajax({
-            url: cartUpdatequantity,
+            url: cartUpdateQuantity,
             method: "POST",
             data: {
                 product_id: productId,

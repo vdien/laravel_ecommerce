@@ -22,6 +22,6 @@
         <p>
             Bạn có thể xem lại thông tin đơn hàng  <a href="#" class="text-dark"> tại đây</a>
         </p>
-        <a class="btn essence-btn mb-5" href="{{route('shop')}}">Tiếp tục mua sắm</a>
+    <a class="btn essence-btn mb-5" href="{{route('shop')}}">Tiếp tục mua sắm</a>
     </div>
 @endsection

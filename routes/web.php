@@ -47,8 +47,10 @@ Route::controller(CartController::class)->group(function () {
     Route::post('/cart/remove', [CartController::class, 'removeCartItem'])->name('cart.remove');
     Route::post('/cart/checkout', [CartController::class, 'processCheckout'])->name('cart.checkout');
     Route::get('/cart/thankyou', [CartController::class, 'thankyou'])->name('cart.thanks');
-    Route::get('/findorder', [CartController::class, 'findorder'])->name('cart.findorder');
+    Route::post('/orders/find', [CartController::class, 'findOrderByPhone'])->name('find.order.by.phone');
 
+    
+    Route::get('/orders/find', [CartController::class, 'findOrders'])->name('findorders');
 });
 
 

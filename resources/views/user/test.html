@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <tr>
+        <th scope="row">
+            <span class="">Mã đơn hàng:${order.id}</span>
+            <span class="float-right">Ngày đặt:${formatDate(order.created_at)}</span>
+        <th>
+    </tr>
+    <tr>
+        <td>
+            <div class="p-2">
+                <img src="http://127.0.0.1:8000/${cartItem.product_img}" alt="" width="70"
+                    class="img-fluid rounded shadow-sm">
+                <div class="ml-3 d-inline-block align-middle">
+                    <h5 class="mb-0"> <a href="#" class="text-dark d-inline-block">${cartItem.name}</a>
+                    </h5>
+                    <span class="text-muted font-weight-normal font-italic">Size:
+                        ${cartItem.size}</span>
+        </td>
+        <td class="align-middle">
+            <strong><span class="quantity">${cartItem.quantity}</span></strong>
+            <input type="number" class="quantity-input" data-product-id="${cartItem.product_id}"
+                data-size="${cartItem.size}" value="${cartItem.quantity}" hidden>
+            </div>
+        </td>
+        <td class="align-middle"><strong>$${cartItem.price * cartItem.quantity}<strong></td>
+    </tr>
+
+
+</body>
+
+</html>

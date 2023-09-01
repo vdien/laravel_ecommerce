@@ -116,7 +116,7 @@
                 </div>
                 <!-- Favourite Area -->
                 <div class="favourite-area">
-                    <a href="#"><img src="{{ asset('home/img/core-img/heart.svg') }}" alt=""></a>
+                    <a href="{{ route('findorders') }}"><img src="{{ asset('home/img/core-img/heart.svg') }}" alt=""></a>
                 </div>
                 <!-- User Login Info -->
                 <div class="user-login-info">
