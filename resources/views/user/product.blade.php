@@ -33,7 +33,11 @@
                 <p class="product-price"><span class="old-price">${{ $product_info->price }}</span>
                     ${{ $product_info->price }}
                 </p>
-                <p class="product-desc"> {{ $product_info->product_long_des }}</p>
+                @php
+                $des = htmlspecialchars_decode($product_info->product_long_des);
+                echo $des;
+                @endphp
+                
 
                 <!-- Form -->
                 <style>

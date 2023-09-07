@@ -1,10 +1,10 @@
 @extends('admin.layout.template')
 @section('page_title')
-    EditProduct-Lnvdien
+    Edit Product - Lnvdien
 @endsection
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pages/</span> Add Product</h4>
+        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pages/</span> Edit Product</h4>
         <div class="col-xxl">
             <div class="card mb-4">
                 <div class="card-header d-flex align-items-center justify-content-between">
@@ -12,16 +12,23 @@
                     <small class="text-muted float-end">Input Information</small>
                 </div>
                 <div class="card-body">
-                     @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+                    @if ($errors->any())
+                        @foreach ($errors->all() as $error)
+                            <div class="alert alert-danger">{{ $error }}</div>
+                        @endforeach
                     @endif
-                    <form action="{{ route('updateproduct') }}" method="POST" >
+
+                    <!-- Toastr -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+                    
+                    @if(session('success'))
+                        <script>
+                            toastr.success('{{ session('success') }}');
+                        </script>
+                    @endif
+
+                    <form action="{{ route('updateproduct') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                            <input type="hidden" value="{{ $product_info->id }}" name="product_id" id="product_id">
                         <div class="row mb-3">
@@ -96,4 +103,15 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <script>
+      tinymce.init({
+        selector: 'textarea',
+        skin: 'bootstrap',
+        plugins: 'lists, link, image, media',
+        toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help',
+        menubar: false,
+      });
+    </script>
 @endsection

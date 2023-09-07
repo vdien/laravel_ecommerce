@@ -20,7 +20,7 @@
                             <th>Product Name</th>
                             <th>Images</th>
                             <th>Price</th>
-                            <th>Actions</th>
+                            <th>Số lượng</th>
                         </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
@@ -30,8 +30,8 @@
                             <td>{{ $product->product_name }}</td>
                             <td>
                                 <img style="height: 100px;" src="{{ asset($product->product_img) }}" alt="">
-                                <br>
-                                <a href="{{ route('editproductimg',$product->id) }}" class="btn btn-primary">Update Image</a>
+                                {{-- <br> --}}
+                                {{-- <a href="{{ route('editproductimg',$product->id) }}" class="btn btn-primary">Update Image</a> --}}
                             </td>
                             <td>{{ $product->price }}</td>
                             <td>{{ $product->quantity }}</td>
