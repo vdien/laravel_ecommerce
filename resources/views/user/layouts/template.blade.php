@@ -29,7 +29,7 @@
     border-radius: 0px;
     height: 200px;
     overflow-y: auto;
-    
+
 }
    </style>
 </head>
@@ -57,7 +57,7 @@
                     <!-- Nav Start -->
                     <div class="classynav">
                         <ul>
-                            <li><a href="{{ route('shop') }}">Shop</a>
+                            <li><a href="{{ route('shop') }}">Sản phẩm</a>
                                 <div class="megamenu">
                                     @php
                                         $categories = App\Models\Category::latest()->get();
@@ -85,20 +85,8 @@
                                     </div>
                                 </div>
                             </li>
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="index.html">Home</a></li>
-                                    <li><a href="{{ route('shop') }}">Shop</a></li>
-                                    <li><a href="single-product-details.html">Product Details</a></li>
-                                    <li><a href="checkout.html">Checkout</a></li>
-                                    <li><a href="blog.html">Blog</a></li>
-                                    <li><a href="single-blog.html">Single Blog</a></li>
-                                    <li><a href="regular-page.html">Regular Page</a></li>
-                                    <li><a href="contact.html">Contact</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="blog.html">Blog</a></li>
-                            <li><a href="contact.html">Contact</a></li>
+                            <li><a href="blog.html">Bài viết</a></li>
+                            <li><a href="contact.html">Liên hệ</a></li>
                         </ul>
                     </div>
                     <!-- Nav End -->
@@ -110,19 +98,16 @@
                 <!-- Search Area -->
                 <div class="search-area">
                     <form action="#" method="post">
-                        <input type="search" name="search" id="headerSearch" placeholder="Type for search">
+                        <input type="search" name="search" id="headerSearch" placeholder="Tìm kiếm sản phẩm">
                         <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
                     </form>
                 </div>
                 <!-- Favourite Area -->
                 <div class="favourite-area">
-                    <a href="{{ route('findorders') }}"><img src="{{ asset('home/img/core-img/heart.svg') }}" alt=""></a>
+                    <a href="{{ route('findorders') }}"><img style="max-width: 30px" src="{{ asset('home/img/core-img/shipping.svg') }}" alt=""></a>
                 </div>
                 <!-- User Login Info -->
-                <div class="user-login-info">
-                    <a href="{{ route('profile.edit') }}"><img src="{{ asset('home/img/core-img/user.svg') }}"
-                            alt=""></a>
-                </div>
+
                 <!-- Cart Area -->
                 <div class="cart-area">
                     <a href="#" id="essenceCartBtn"><img src="{{ asset('home/img/core-img/bag.svg') }}"
@@ -155,15 +140,15 @@
             <!-- Cart Summary -->
             <div class="cart-amount-summary">
 
-                <h2>Summary</h2>
+                <h2>Tóm tắt</h2>
                 <ul class="summary-table">
-                    <li><span>subtotal:</span> <span name="subtotal">$0</span></li>
-                    <li><span>delivery:</span> <span name=shipping>Free</span></li>
-                    <li><span>discount:</span> <span name="discount">-0%</span></li>
-                    <li><span>total:</span> <span name="totalCart">0</span></li>
+                    <li><span>Tổng tiền:</span> <span name="subtotal">0đ</span></li>
+                    <li><span>Phí vận chuyển:</span> <span name=shipping>Miễn phí</span></li>
+                    <li><span>Giảm giá:</span> <span name="discount">-0%</span></li>
+                    <li><span>Tổng cộng:</span> <span name="totalCart"></span></li>
                 </ul>
                 <div class="checkout-btn mt-100">
-                    <a href="{{ route('cartpage') }}" class="btn essence-btn">View Cart</a>
+                    <a href="{{ route('cartpage') }}" class="btn essence-btn">Xem giỏ hàng</a>
                 </div>
             </div>
         </div>
@@ -265,11 +250,11 @@
 
         </div>
     </footer>
-   
- 
+
+
       <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
-   
-      
+
+
     <!-- Popper js -->
 
     <script src="{{ asset('home/js/popper.min.js') }}"></script>

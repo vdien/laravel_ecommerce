@@ -48,8 +48,6 @@ Route::controller(CartController::class)->group(function () {
     Route::post('/cart/checkout', [CartController::class, 'processCheckout'])->name('cart.checkout');
     Route::get('/cart/thankyou', [CartController::class, 'thankyou'])->name('cart.thanks');
     Route::post('/orders/find', [CartController::class, 'findOrderByPhone'])->name('find.order.by.phone');
-
-    
     Route::get('/orders/find', [CartController::class, 'findOrders'])->name('findorders');
 });
 
@@ -57,7 +55,7 @@ Route::controller(CartController::class)->group(function () {
 
 
 Route::middleware(['auth', ])->group(function () {
-   
+
 });
 Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified', "role:user"])->name('dashboard');
@@ -69,7 +67,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware('auth', 'role:admin')->group(function () {
+Route::middleware(['auth','role:admin'])->group(function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/admin/dashboard', 'Index')->name("admindashboard");
     });
@@ -101,13 +99,14 @@ Route::middleware('auth', 'role:admin')->group(function () {
     });
     Route::controller(OrderController::class)->group(function () {
         Route::get('/admin/pending-orders', 'Index')->name("pendingorders");
+        Route::get('/admin/compelete-orders', 'CompeleteOrder')->name("completeOrder");
+        Route::get('/admin/cancel-orders', 'CancelOrder')->name("cancelOrder");
+        Route::get('/admin/order/{id}', 'orderDetail')->name("orderdetail");
+        Route::post('/update-order-status', 'updateStatus')->name('update.order.status');
+
+
+
     });
 });
-Route::middleware('auth', 'role:admin')->group(
-    function () {
-        Route::controller(DashboardController::class)->group(function () {
-            Route::get('/admin/dashboard', 'Index')->name("admindashboard");
-        });
-    }
-);
+
 require __DIR__ . '/auth.php';

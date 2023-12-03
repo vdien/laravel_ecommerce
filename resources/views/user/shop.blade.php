@@ -7,6 +7,10 @@
 @section('shop-content')
     <!-- ##### Shop Grid Area Start ##### -->
     @foreach ($products as $product)
+    @php
+    $product_price = number_format($product->price, 0, '.', ',');
+
+ @endphp
         <div class="col-12 col-sm-6 col-lg-4">
             <a href="{{ route('singleproduct', [$product->id, $product->slug]) }}">
                 <div class="single-product-wrapper">
@@ -17,9 +21,7 @@
                         <img class="hover-img" src="{{ asset($product->product_img) }}" alt="">
 
                         <!-- Product Badge -->
-                        <div class="product-badge offer-badge">
-                            <span>-30%</span>
-                        </div>
+
                         <!-- Favourite -->
                         <div class="product-favourite">
                             <a href="#" class="favme fa fa-heart"></a>
@@ -32,7 +34,7 @@
                         <a href="single-product-details.html">
                             <h6>{{ $product->product_name }}</h6>
                         </a>
-                        <p class="product-price"><span class="old-price">$75.00</span> {{ $product->price }}.00</p>
+                        <p class="product-price">{{ $product_price }}</p>
 
                     </div>
                 </div>

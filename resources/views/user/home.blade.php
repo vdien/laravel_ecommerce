@@ -78,7 +78,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="section-heading text-center">
-                        <h2>Popular Products</h2>
+                        <h2>Sản phẩm nổi bật</h2>
                     </div>
                 </div>
             </div>
@@ -94,19 +94,22 @@
                                 <!-- Product Image -->
                                 <a href="{{ route('singleproduct', [$product->id, $product->slug]) }}">
                                     <div class="product-img">
+
                                         <img src="{{ asset($product->product_img) }}" alt="">
-                                        <!-- Hover Thumb -->
                                         <img class="hover-img" src="{{ asset($product->product_img) }}" alt="">
+
+                                        <!-- Hover Thumb -->
                                         <!-- Favourite -->
-                                        <div class="product-favourite">
-                                            <a href="#" class="favme fa fa-heart"></a>
-                                        </div>
+
                                     </div>
+                                    @php
+                                        $product_price = number_format($product->price, 0, '.', ',')
+                                    @endphp
                                     <!-- Product Description -->
                                     <div class="product-description">
                                         <span>{{ $product->product_subcategory_name }}</span>
                                         <h6>{{ $product->product_name }}</h6>
-                                        <p class="product-price">{{ $product->price }}</p>
+                                        <p class="product-price">{{ $product_price }}đ</p>
                                     </div>
                                 </a>
                             </div>

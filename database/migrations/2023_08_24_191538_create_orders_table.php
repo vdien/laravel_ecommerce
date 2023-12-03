@@ -17,9 +17,6 @@ return new class extends Migration
         $table->id();
         $table->string('name');
         $table->string('phone');
-        $table->string('city');
-        $table->string('district');
-        $table->string('ward');
         $table->string('address');
         $table->string('status');
         $table->integer('subtotal');

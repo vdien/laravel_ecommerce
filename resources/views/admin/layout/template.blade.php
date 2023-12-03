@@ -44,6 +44,30 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ asset('dashboard/assets/js/config.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+    integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+   <style>
+        .thumbnail-container {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .thumbnail-container img {
+            max-width: 200;
+            height: auto;
+            /* To maintain aspect ratio */
+        }
+
+        .tox-notifications-container {
+            display: none;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -130,13 +154,13 @@
                         </a>
                     </li>
                     <li class="menu-item ">
-                        <a href="{{ route('pendingorders') }}" class="menu-link">
+                        <a href="{{ route('completeOrder') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-home-circle"></i>
                             <div data-i18n="Analytics">Complete Orders</div>
                         </a>
                     </li>
                     <li class="menu-item ">
-                        <a href="{{ route('pendingorders') }}" class="menu-link">
+                        <a href="{{ route('cancelOrder') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-home-circle"></i>
                             <div data-i18n="Analytics">Cancel Orders</div>
                         </a>
@@ -228,14 +252,14 @@
                                             @csrf
                                             <button type="submit"
                                                 class="dropdown-item">
-                                               
-                                               
+
+
                                                     <i class="bx bx-power-off me-2"></i>
                                                     <span class="align-middle">Log Out</span>
-                                               
+
                                             </button>
                                         </form>
-                                       
+
                                     </li>
                                 </ul>
                             </li>
@@ -243,7 +267,7 @@
                         </ul>
                     </div>
 
-                    
+
                 </nav>
 
                 <!-- / Navbar -->
@@ -283,7 +307,127 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script src="{{ asset('dashboard/assets/vendor/js/helpers.js') }}"></script>
- 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+        integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('home/js/toast.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+        $('#updateStatusButton').click(function() {
+        var orderId = $('#order_id').val();
+        var status = $('#orderStatus').val();
+
+        $.ajax({
+            type: 'POST',
+            url: "{{ route('update.order.status') }}",
+            data: {
+            _token: "{{ csrf_token() }}",
+                order_id: orderId,
+                status: status
+            },
+            success: function(response) {
+                // Handle success response (e.g., show a success message)
+                toastr.success('Order status has been updated to ' + response.message);
+
+                // Redirect to the desired page after a successful update if needed
+
+            },
+            error: function(error) {
+                // Handle error response (e.g., show an error message)
+                toastr.error('Error updating order status: ' + error.responseText);
+            }
+        });
+    });
+});
+    </script>
+    <script>
+        var uploadedImages = [];
+        // Function to handle image preview
+        function previewImages() {
+            var previewRow = document.getElementById('imagePreviewRow');
+            var files = document.getElementById('product_images').files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    var img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('preview-image', 'col-4', 'mb-2'); // Add Bootstrap classes
+                    img.style.maxWidth = '200px'; // Set max width for the thumbnail
+                    img.onclick = function() {
+                        removeImage(this);
+                    };
+                    previewRow.appendChild(img);
+                    uploadedImages.push(file);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        }
+        function previewImagesChild() {
+            var previewRow = document.getElementById('imagePreviewRowChild');
+            var files = document.getElementById('product_images_child').files;
+
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    var img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('preview-image-child', 'col-4', 'mb-2'); // Add Bootstrap classes
+                    img.style.maxWidth = '200px'; // Set max width for the thumbnail
+                    img.onclick = function() {
+                        removeImage(this);
+                    };
+                    previewRow.appendChild(img);
+                    uploadedImages.push(file);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+
+        // Trigger image preview when files are selected
+        document.getElementById('product_images').addEventListener('change', function() {
+            previewImages();
+        });
+        document.getElementById('product_images_child').addEventListener('change', function() {
+            previewImagesChild();
+        });
+
+        // Function to remove an image from the preview and the uploadedImages array
+        function removeImage(image) {
+            var indexToRemove = uploadedImages.indexOf(image);
+            if (indexToRemove !== -1) {
+                uploadedImages.splice(indexToRemove, 1);
+            }
+            image.remove();
+        }
+
+        // Attach click event to Delete button for each image
+        document.querySelectorAll('.delete-image-btn').forEach(function(deleteBtn) {
+            deleteBtn.addEventListener('click', function() {
+                var image = this.parentElement.querySelector('img');
+                removeImage(image);
+            });
+        });
+    </script>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            skin: 'bootstrap',
+            plugins: 'lists, link, image, media',
+            toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help',
+            menubar: false,
+
+        });
+    </script>
 </body>
 
 </html>

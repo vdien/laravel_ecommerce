@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ class CartController extends Controller
     {
         $product_info = Product::findOrFail(1);
         $cartItems = Session::get('cart', []);
-        return view('cart.index', compact('cartItems','product_info'));
+        return view('cart.index', compact('cartItems', 'product_info'));
 
     }
 
@@ -39,18 +40,18 @@ class CartController extends Controller
             // Update the quantity of the existing item
             $cart[$existingCartItemKey]['quantity'] += $request->quantity;
         } else {
-        $cartItem = [
-            'product_subcategory'=> $product->product_subcategory_name,
-            'product_id' => $product->id,
-            'product_img' => $product->product_img,
-            'name' => $product->product_name,
-            'price' => $product->price,
-            'quantity' => $request->quantity,
-            'size' => $request->size
-            // Add other details you need
-        ];
-        $cart[] = $cartItem;
-    }
+            $cartItem = [
+                'product_subcategory' => $product->product_subcategory_name,
+                'product_id' => $product->id,
+                'product_img' => $product->product_img,
+                'name' => $product->product_name,
+                'price' => $product->price,
+                'quantity' => 1,
+                'size' => $request->size
+                // Add other details you need
+            ];
+            $cart[] = $cartItem;
+        }
 
         Session::put('cart', $cart);
         $cartItems = Session::get('cart', []);
@@ -62,6 +63,27 @@ class CartController extends Controller
     $productId = $request->product_id;
     $size = $request->size;
     $newQuantity = $request->quantity;
+
+    // Fetch the product by ID
+    $product = Product::findOrFail($productId);
+
+    // Fetch the specific size for the product
+    $productSize = $product->sizes()->where('size', $size)->first();
+
+    if (!$productSize) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Size not found for this product.'
+        ]);
+    }
+
+    // Check if the requested quantity exceeds the available product size quantity
+    if ($productSize->quantity < $newQuantity) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Requested quantity exceeds available stock for this size.'
+        ]);
+    }
 
     // Update the quantity of the cart item
     $cart = Session::get('cart', []);
@@ -91,21 +113,25 @@ class CartController extends Controller
         }
     }
 
-    return response()->json(['success' => false, 'message' => 'Cart item not found.']);
+    return response()->json([
+        'success' => false,
+        'message' => 'Cart item not found.'
+    ]);
 }
 
 
-    
+
+
     public function getCartItems()
     {
         $cartItems = Session::get('cart', []);
-        
+
 
         // Return the cart items as a JSON response
         return response()->json([
             'success' => true,
             'cart_items' => $cartItems,
-            'cart_count' => count($cartItems) 
+            'cart_count' => count($cartItems)
         ]);
     }
     public function calculateSubtotal()
@@ -119,14 +145,14 @@ class CartController extends Controller
 
         return $subtotal;
     }
-    
+
     public function removeCartItem(Request $request)
     {
         $productId = $request->input('product_id');
         $size = $request->input('size');
-    
+
         $cart = Session::get('cart', []);
-        
+
         foreach ($cart as $key => $cartItem) {
             if ($cartItem['product_id'] == $productId && $cartItem['size'] == $size) {
                 unset($cart[$key]);
@@ -136,58 +162,63 @@ class CartController extends Controller
         $cart = array_values($cart);
 
         Session::put('cart', $cart);
-    
+
         $cartCount = count($cart);
-    
+
         return response()->json([
             'success' => true,
             'message' => 'Item removed from cart.',
             'cart_count' => $cartCount,
         ]);
     }
-    
+
     public function processCheckout(Request $request)
     {
         // Validate the request data if needed
-        
-        $cartItemsData =  Session::get('cart', []);
-        
+
+        $cartItemsData = Session::get('cart', []);
         $subtotal = 0;
 
         foreach ($cartItemsData as $cartItem) {
             $subtotal += $cartItem['quantity'] * $cartItem['price'];
-        }        
+        }
         $order = new Order([
             'name' => $request->input('name'),
             'phone' => $request->input('phone'),
-            'city' => $request->input('city'),
-            'district' => $request->input('district'),
-            'ward' => $request->input('ward'),
-            'address' => $request->input('address'),
+            'address' => $request->input('address') . " " . $request->input('ward') . " " . $request->input('district') . " " . $request->input('city'),
             'cart_items' => $cartItemsData,
             'subtotal' => $subtotal,
-            'status' => "Đang chờ xác nhận"
+            'status' => "Chờ xác nhận"
         ]);
         $order->save();
-        
+          // Update product sizes' quantities
+        foreach ($cartItemsData as $cartItem) {
+        $product = Product::findOrFail($cartItem['product_id']);
+        $productSize = $product->sizes()->where('size', $cartItem['size'])->first();
+
+        if ($productSize) {
+            $updatedQuantity = $productSize->quantity - $cartItem['quantity'];
+            $productSize->update(['quantity' => $updatedQuantity]);
+        }
+    }
         session(['cart_count' => 0]);
         session(['cart' => []]);
-        
+
         return response()->json(['success' => true]);
     }
-    public function thankyou(){
+    public function thankyou()
+    {
         return view('user.thankyou');
     }
-    public function findOrders(){
+    public function findOrders()
+    {
         return view('user.findorders');
 
     }
     public function findOrderByPhone(Request $request)
     {
         $phoneNumber = $request->input('phone');
-
         $orders = Order::where('phone', $phoneNumber)->latest()->get();
-    
         return response()->json(['orders' => $orders]);
     }
 }

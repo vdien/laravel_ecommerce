@@ -11,6 +11,7 @@ class CategoryController extends Controller
     //
     public function Index()
     {
+
         $categories = Category::latest()->get();
         return view('admin.layout.category.allcategory', compact('categories'));
     }

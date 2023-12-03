@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Size;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
 
@@ -31,9 +32,10 @@ class ClientController extends Controller
     {
         $popular_product = Product::latest()->get();
         $product_info = Product::findOrFail($id);
-        return view('user.product', compact('product_info', 'popular_product'));
+        $sizes = Size::where('product_id', $product_info->id)->get();
+        return view('user.product', compact('product_info', 'popular_product','sizes'));
     }
-    
+
     public function Cart()
     {
         return view('user.cart');

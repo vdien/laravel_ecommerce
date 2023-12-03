@@ -18,7 +18,12 @@ class Product extends Model
         'product_category_id',
         'product_subcategory_id',
         'product_img',
+        'product_img_child',
         'quantity',
         'slug',
     ];
+    public function sizes()
+    {
+        return $this->hasMany(Size::class, 'product_id');
+    }
 }

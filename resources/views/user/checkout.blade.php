@@ -32,7 +32,6 @@
                                     <label for="name_order">Họ và tên <span>*</span></label>
                                     <input type="text" class="form-control" id="name_order" value="" required>
                                 </div>
-
                                 <div class="col-12 mb-3">
                                     <label for="phone_order">Số điện thoại<span>*</span></label>
                                     <input type="text" class="form-control" id="phone_order" value="" required>
@@ -61,7 +60,6 @@
                                     <label for="adress_order">Địa chỉ:</label>
                                     <input type="text" class="form-control" id="adressCheckout" value="">
                                 </div>
-
                             </div>
                         </form>
                     </div>

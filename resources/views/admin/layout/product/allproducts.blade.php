@@ -19,28 +19,37 @@
                             <th>Id</th>
                             <th>Product Name</th>
                             <th>Images</th>
-                            <th>Price</th>
-                            <th>Số lượng</th>
+                            <th>Giá</th>
+                            <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
                         @foreach ($products as $product)
-                        <tr>
-                            <td>{{ $product->id }}</td>
-                            <td>{{ $product->product_name }}</td>
-                            <td>
-                                <img style="height: 100px;" src="{{ asset($product->product_img) }}" alt="">
-                                {{-- <br> --}}
-                                {{-- <a href="{{ route('editproductimg',$product->id) }}" class="btn btn-primary">Update Image</a> --}}
-                            </td>
-                            <td>{{ $product->price }}</td>
-                            <td>{{ $product->quantity }}</td>
-                            <td>
-                                <a href="{{ route('editproduct',$product->id) }}" class="btn btn-primary">Edit</a>
-                                <a href="{{ route('deleteproduct',$product->id) }}" class="btn btn-warning">Delete</a>
-                            </td>
+                            <tr>
+                                <td>{{ $product->id }}</td>
+                                <td>{{ $product->product_name }}</td>
+                                <td>
+                                    <img src="{{ asset($product->product_img) }}" alt="Product image"
+                                        style="height: 200px;">
+
+                        </td>
+                        <td>{{ $product->price }}</td>
+                        <td>
+
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{{ route('editproduct', $product->id) }}"><i
+                                            class="bx bx-edit-alt me-1"></i> Edit</a>
+                                    <a class="dropdown-item" href="{{ route('deleteproduct', $product->id) }}"><i
+                                            class="bx bx-trash me-1"></i> Delete</a>
+                                </div>
+                            </div>
+                        </td>
+                        @endforeach
                         </tr>
-                          @endforeach
                     </tbody>
                 </table>
             </div>

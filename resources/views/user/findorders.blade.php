@@ -71,15 +71,15 @@
                                         </ul>
                                     </div>
                                     <div class="col-6">
-                                        <ul class="order-details-form mb-4">
-                                            <span>Họ và tên:  ${order.name}</li>   
-                                            <li>Số điện thoại:  ${order.phone}</li>   
-                                            <li>Địa chỉ: ${order.address}, ${order.ward}, ${order.district}, ${order.city}</li>  
-                                            <li>Tổng tiền thanh toán:  ${order.subtotal}</li>    
-                                            <li>Tình trạng đơn hàng:  ${order.status}</li>  
+                                        <ul class="order-details-form mb-4 ">
+                                            <span>Họ và tên:  ${order.name}</li>
+                                            <li>Số điện thoại:  ${order.phone}</li>
+                                            <li>Địa chỉ: ${order.address}</li>
+                                            <li>Tổng tiền thanh toán:  ${order.subtotal}</li>
+                                            <li>Tình trạng đơn hàng:  ${order.status}</li>
                                         </ul>
                                     </div>
-                                    <h6 class="mt-5">Mọi vấn đề về đơn hàng vui lòng liên hệ qua số điện thoại: 0353225457</h6>
+                                    <h7 class="mt-5">Mọi vấn đề về đơn hàng vui lòng liên hệ qua số điện thoại: 0353225457</h7>
                                 </div>
                                 </div>
                             </div>
@@ -95,7 +95,7 @@
         $.each(cartItems, function (index, cartItem) {
             var subtotal = cartItem.price * cartItem.quantity;
 
-            cartItemsHTML += `  
+            cartItemsHTML += `
                 <li>
                     <div class="p-2">
                         <div class="col-12">
@@ -103,9 +103,9 @@
                             class="img-fluid rounded shadow-sm">
                         <div class="ml-3 d-inline-block align-middle">
                             <h5 class="mb-0"> <a href="#" class="text-dark d-inline-block">${cartItem.name}</a></h5>
-                            <span class="text-muted font-weight-normal font-italic">Size: ${cartItem.size}</span>  
+                            <span class="text-muted font-weight-normal font-italic">Size: ${cartItem.size}</span>
                         </div>
-                        <span class="text-muted font-weight-normal font-italic ml-1"> x${cartItem.quantity}</span>  
+                        <span class="text-muted font-weight-normal font-italic ml-1"> x${cartItem.quantity}</span>
                     </div>
                 </li>
             `;

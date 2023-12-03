@@ -21,7 +21,7 @@
     $(function () {
         $('[name=add-to-cart-form]').on('submit', function (event) {
             event.preventDefault();
-    
+
             $.ajax({
                 url: cartAdd,
                 method: "POST",
@@ -50,13 +50,13 @@
     function updateCartList(cartItems) {
         var cartList = $('.cart-list');
         cartList.empty();
-    
+
         if (cartItems.length === 0) {
             // Show an empty cart message
-            cartList.append('<span>Your cart is empty.</span>');
+            cartList.append('<p>Your cart is empty.</p>');
             return;
         }
-    
+
         // Loop through the cart items and add them to the cart list
         for (var i = 0; i < cartItems.length; i++) {
             var cartItem = cartItems[i];
@@ -71,7 +71,7 @@
                         <h6>${cartItem.name}</h6>
                         <p class="size">Size: ${cartItem.size}</p>
                         <p class="color">Quantity:${cartItem.quantity}</p>
-                        <p class="price">$${cartItem.price}</p>
+                        <p class="price">${cartItem.price} Đ</p>
                     </div>
                 </a>
             </div>
@@ -79,18 +79,18 @@
             cartList.append(itemHTML);
         }
     }
-    
+
     function updateCartCheckout(cartItems) {
-    
+
         var cartList = $('.cart-list-checkout');
         cartList.empty();
-    
+
         if (cartItems.length === 0) {
             // Show an empty cart message
-            cartList.append('<span>Your cart is empty.</span>');
+            cartList.append('<p>Your cart is empty.</p>');
             return;
         }
-    
+
         // Loop through the cart items and add them to the cart list
         for (var i = 0; i < cartItems.length; i++) {
             var cartItem = cartItems[i];
@@ -108,16 +108,16 @@
                                     ${cartItem.size}</span>
                             </div>
                         </div>
-                    
+
                     <td class="align-middle">
                     <span class="quantity-decrease" name="quantity-decrease" style="cursor: pointer;"data-product-id="${cartItem.product_id}" data-size="${cartItem.size}" data-quantity="${cartItem.quantity}">-</span>
                     <strong><span class="quantity">${cartItem.quantity}</span></strong>
                     <input type="number" class="quantity-input" data-product-id="${cartItem.product_id}" data-size="${cartItem.size}" value="${cartItem.quantity}" hidden>
-    
+
                  <span class="quantity-increase"  style="cursor: pointer;"data-product-id="${cartItem.product_id}" data-size="${cartItem.size}" >+</span>
                                 </div>
                     </td>
-                    <td class="align-middle"><strong>$${cartItem.price * cartItem.quantity}<strong></td>
+                    <td class="align-middle"><strong>${cartItem.price * cartItem.quantity } Đ<strong></td>
                     <td class="align-middle"><a href="#" class="text-dark remove-cart-item" data-product-id="${cartItem.product_id}" data-size="${cartItem.size}" ><i
                                 class="fa fa-trash"></i></a>
                     </td>
@@ -126,7 +126,7 @@
             cartList.append(itemHTML);
         }
     }
-    
+
     function updateCartItemQuantity(productId, size, newQuantity) {
         $.ajax({
             url: cartUpdateQuantity,
@@ -143,9 +143,9 @@
                 if (response.success) {
                     fetchAndRenderCart(); // Update the cart list
                     updateCartCount(response.cart_count); // Update the cart_count
-                    toastr.success('Quantity updated.', 'Success');
+                    toastr.success(response.message, 'Success');
                 } else {
-                    toastr.error('Failed to update quantity.', 'Error');
+                    toastr.error(response.message, 'Error');
                 }
             },
             error: function () {
@@ -153,7 +153,7 @@
             }
         });
     }
-    
+
     function updateSubtotal(cartItems) {
         var subtotal = 0;
         var discount = 0;
@@ -162,16 +162,16 @@
             subtotal += cartItems[i].quantity * cartItems[i].price;
         }
         var total = subtotal * (100 - discount) / 100 + Shipping
-    
-        $("[name='subtotal']").text('$' + subtotal.toFixed(2));
-        Shipping = 0 ? $("[name='shipping']").text('FREE') : $("[name='shipping']").text('$' + Shipping.toFixed(2))
-        $("[name='totalCart']").text('$' + total.toFixed(2));
-    
+
+        $("[name='subtotal']").text(subtotal.toFixed(0)+ 'đ');
+        Shipping = 0 ? $("[name='shipping']").text('Miễn phí') : $("[name='shipping']").text(Shipping.toFixed(0) + 'đ')
+        $("[name='totalCart']").text(total.toFixed(0)+'đ'  );
+
     }
     function updateCartCount(count) {
         $("[name='countCart']").text(count);
     }
-    
+
     function removeCartItem(productId, size) {
         $.ajax({
             url: cartRemove, // Replace with your route to remove cart item
@@ -205,35 +205,34 @@
             var size = $(this).data('size');
             var inputElement = $(this).siblings('.quantity-input');
             var newQuantity = parseInt(inputElement.val()) - 1;
-    
+
             updateCartItemQuantity(productId, size, newQuantity);
         });
-    
+
         // Event listener for increase span
         $(document).on('click', '.quantity-increase', function () {
             var productId = $(this).data('product-id');
             var size = $(this).data('size');
             var inputElement = $(this).siblings('.quantity-input');
             var newQuantity = parseInt(inputElement.val()) + 1;
-    
+
             updateCartItemQuantity(productId, size, newQuantity);
         });
-    
+
         // Event listener for quantity input change
         $(document).on('change', '.quantity-input', function () {
             var productId = $(this).data('product-id');
             var size = $(this).data('size');
             var newQuantity = parseInt($(this).val());
-    
+
             updateCartItemQuantity(productId, size, newQuantity);
         });
         $(document).on('click', '.remove-cart-item', function () {
             var productId = $(this).data('product-id');
             var size = $(this).data('size');
-    
+
             removeCartItem(productId, size);
         });
         fetchAndRenderCart()
     });
-    
-   
+

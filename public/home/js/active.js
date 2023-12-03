@@ -39,7 +39,7 @@
             margin: 0,
             loop: true,
             nav: true,
-            navText: ["<img src='img/core-img/long-arrow-left.svg' alt=''>", "<img src='img/core-img/long-arrow-right.svg' alt=''>"],
+            navText: ["<img src='http://127.0.0.1:8000/home/img/core-img/long-arrow-left.svg' alt=''>", "<img src='http://127.0.0.1:8000/home/img/core-img/long-arrow-right.svg' alt=''>"],
             dots: false,
             autoplay: true,
             autoplayTimeout: 5000,
@@ -90,7 +90,7 @@
     // if ($.fn.niceSelect) {
     //     $('select').niceSelect();
     // }
-    
+
     // :: Slider Range Price Active Code
     $('.slider-range-price').each(function () {
         var min = jQuery(this).data('min');
