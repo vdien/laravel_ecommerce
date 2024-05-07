@@ -39,7 +39,12 @@ $(function () {
     }
 
     // Customers List Datatable
-
+    function showSuccessToast(message) {
+        // Clear existing toastr notifications
+        toastr.clear();
+        // Show toastr notification
+        toastr.success(message);
+    }
     if (dt_category_list_table.length) {
         var dt_category = dt_category_list_table.DataTable({
             ajax: route('getcategoryjson'), // JSON file to add data
@@ -213,6 +218,34 @@ $(function () {
                 }
             }
         });
+        // Add a listener for form submission
+        $('#addCategoryForm').submit(function (event) {
+            event.preventDefault(); // Prevent default form submission
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: route('storecategory'),
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+
+                    // Update DataTable with new data
+                    dt_category.clear().rows.add(response).draw();
+                    $('#offcanvasEcommerceCategoryList').offcanvas('hide'); // Hide offcanvas
+                    showSuccessToast('Category added successfully.'); // Show success message
+                    //reset form add
+                    $('#image_category_preview').innerHTML = '';
+                    $('#addCategoryForm')[0].reset();
+
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                    // Handle error if needed
+                }
+            });
+        });
         $('.datatables-category-list tbody').on('click', '.edit-record', function () {
 
             // Get the closest row to the clicked edit button
@@ -220,6 +253,7 @@ $(function () {
             // Get the data of the row using DataTables API
             var rowData = dt_category.row($row).data();
             // Get the category name and detail from the row data
+            var categoryId = rowData.id
             var categoryName = rowData.category_name;
             var categorySlug = rowData.slug;
             var categoryDetail = rowData.description;
@@ -227,6 +261,7 @@ $(function () {
             var categoryImage = rowData.category_image;
 
             // Populate the modal with data from the row
+            $('#edit_category_id').val(categoryId);
             $('#edit_category_name').val(categoryName);
             $('#edit_ecommerce_category_slug').val(categorySlug);
             $('#edit_ecommerce_category_description_input').val(categoryDetail);
@@ -239,8 +274,8 @@ $(function () {
                 $('#edit_image_category_preview').empty();
             }
             $('#edit_ecommerce_category_status').val(categoryStatus).trigger('change');
-            // Show the modal
-            $('#editCategoryModal').modal('show');
+            // Handle click event of "Save Changes" button
+
         });
         // Image preview functionality (optional, if you also want to update the preview when changing the image)
         $('#edit_ecommerce_category_image').change(function (e) {
@@ -255,17 +290,67 @@ $(function () {
                 $('#image_preview').empty();
             }
         });
+        $('#editCategoryForm').submit(function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: route('updatecategory'),
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    dt_category.clear().rows.add(response).draw();
+                    $('#editCategoryModal').modal('hide');
+                    $('#confirmModal').modal('hide');
+                    showSuccessToast('Category updated successfully.');
+                },
+                error: function (xhr, status, error) {
+                    toastr.error(error);
+                }
+            });
+        });
+        $('#saveChangesBtn').on('click', function (event) {
+            event.preventDefault(); // Prevent default form submission
+            $('#confirmModal').modal('show'); // Show the confirmation modal
+        });
         // Delete Record
         $('.datatables-category-list tbody').on('click', '.delete-record', function () {
-            dt_category.row($(this).parents('tr')).remove().draw();
-        });
+            var $row = $(this).closest('tr');
+            var rowData = dt_category.row($row).data();
+            var categoryId = rowData.id;
 
+            // Show the confirmation modal for delete
+            $('#confirmDeleteModal').modal('show');
+
+            // Set data-attribute on confirmation button to hold the category ID
+            $('#confirmDelete').data('category-id', categoryId);
+        });        $('#confirmDelete').on('click', function () {
+            var categoryId = $(this).data('category-id');
+            // Perform the delete action (e.g., send AJAX request to delete the record)
+            // Replace this with your actual delete logic
+            let deleteCategoryUrl = route('deletecategory', { id: categoryId });
+
+            $.ajax({
+                url: deleteCategoryUrl,
+                method: 'GET',
+                data: { categoryId: categoryId },
+                success: function (response) {
+                    // Handle success (e.g., remove the row from the DataTable)
+                    dt_category.row(response).remove().draw();
+                    $('#confirmDeleteModal').modal('hide');
+                    toastr.success('Category deleted successfully.');
+                },
+                error: function (xhr, status, error) {
+                    toastr.error(error);
+                }
+            });
+        });
         $('.dt-action-buttons').addClass('pt-0');
         $('.dataTables_filter').addClass('me-3 ps-0');
     }
-
-
-
     // Filter form control to default size
     // ? setTimeout used for multilingual table initialization
     setTimeout(() => {
@@ -281,54 +366,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
         reader.onload = function (e) {
             const preview = document.getElementById('image_category_preview');
-            preview.innerHTML = ''; // Clear previous preview
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.classList.add('img-fluid', 'pt-3');
-            preview.appendChild(img);
+            if (preview) { // Check if the container element exists
+                preview.innerHTML = ''; // Clear previous preview
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('img-fluid', 'pt-3');
+                preview.appendChild(img);
+            }
         };
         reader.readAsDataURL(file);
     });
 });
 
-
-
 //For form validation
+// Example starter JavaScript for disabling form submissions if there are invalid fields
 (function () {
-    const eCommerceCategoryListForm = document.getElementById('eCommerceCategoryListForm');
+    'use strict'
 
-    //Add New customer Form Validation
-    const fv = FormValidation.formValidation(eCommerceCategoryListForm, {
-        fields: {
-            categoryTitle: {
-                validators: {
-                    notEmpty: {
-                        message: 'Please enter category title'
-                    }
-                }
-            },
-            slug: {
-                validators: {
-                    notEmpty: {
-                        message: 'Please enter slug'
-                    }
-                }
-            }
-        },
-        plugins: {
-            trigger: new FormValidation.plugins.Trigger(),
-            bootstrap5: new FormValidation.plugins.Bootstrap5({
-                // Use this for enabling/changing valid/invalid class
-                eleValidClass: 'is-valid',
-                rowSelector: function (field, ele) {
-                    // field is the field name & ele is the field element
-                    return '.mb-3';
-                }
-            }),
-            submitButton: new FormValidation.plugins.SubmitButton(),
-            // Submit the form when all fields are valid
-            // defaultSubmit: new FormValidation.plugins.DefaultSubmit(),
-            autoFocus: new FormValidation.plugins.AutoFocus()
-        }
-    });
-})();
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.querySelectorAll('.needs-validation')
+
+    // Loop over them and prevent submission
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
+

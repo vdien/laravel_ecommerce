@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/quill/katex.css') }} " />
     <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/quill/editor.css') }} " />
     <link rel="stylesheet" href="{{ asset('dashboard/vendor/css/pages/app-ecommerce.css') }}" />
+    <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/toastr/toastr.css') }}" />
 @endsection
 @section('page_script')
     <script src="{{ asset('dashboard/vendor/libs/moment/moment.js') }} "></script>
@@ -26,6 +27,9 @@
     <script src="{{ asset('dashboard/vendor/libs/@form-validation/auto-focus.js') }} "></script>
     <script src="{{ asset('dashboard/vendor/libs/quill/katex.js') }} "></script>
     <script src="{{ asset('dashboard/vendor/libs/quill/quill.js') }} "></script>
+    <script src="{{ asset('dashboard/vendor/libs/toastr/toastr.js') }} "></script>
+
+
     <!-- Page JS -->
     <script src="{{ asset('dashboard/js/main.js') }} "></script>
     <script src="{{ asset('dashboard/js/app-ecommerce-category-list.js') }}"></script>
@@ -59,60 +63,65 @@
                     <button type="button" class="btn-close bg-label-secondary text-reset" data-bs-dismiss="offcanvas"
                         aria-label="Close"></button>
                 </div>
-                <!-- Offcanvas Body -->
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
 
                 <div class="offcanvas-body border-top">
-                    <form class="pt-0" action="{{ route('storecategory') }}" method="POST"
-                        enctype="multipart/form-data">
+                    <form id="addCategoryForm" class="pt-0 needs-validation" enctype="multipart/form-data" novalidate>
                         @csrf
                         <!-- Title -->
                         <div class="mb-3">
                             <label class="form-label" for="category_name">Category Name</label>
                             <input type="text" class="form-control" name="category_name"
-                                placeholder="Enter category name" aria-label="category name" />
+                                placeholder="Enter category name" aria-label="category name" required />
+                            <div class="invalid-feedback">
+                                Please select a category name.
+                            </div>
                         </div>
+
                         <!-- Slug -->
                         <div class="mb-3">
                             <label class="form-label" for="ecommerce_category_slug">Slug</label>
                             <input type="text" id="ecommerce_category_slug" name="ecommerce_category_slug"
-                                class="form-control" placeholder="Enter slug" aria-label="slug" name="slug" />
+                                class="form-control" placeholder="Enter slug" aria-label="slug" name="slug" required />
+                            <div class="invalid-feedback">
+                                Please select a category slug.
+                            </div>
                         </div>
                         <!-- Image -->
                         <div class="mb-3">
-                            <label class="form-label" for="ecommerce_category_image">Attachment</label>
+                            <label class="form-label" for="ecommerce_category_image">Image</label>
                             <input class="form-control" type="file" id="ecommerce_category_image"
-                                name="ecommerce_category_image" />
+                                name="ecommerce_category_image" required />
                             <div id="image_category_preview"></div>
-
+                            <div class="invalid-feedback">
+                                Please select a category image.
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label for="editCategoryDetail" class="form-label">Category Detail</label>
-                            <textarea class="form-control" name="ecommerce_category_description" id="ecommerce_category_description_input"></textarea>
+                            <label for="editCategoryDetail" class="form-label">Category Description</label>
+                            <textarea class="form-control" name="ecommerce_category_description" id="ecommerce_category_description_input" required></textarea>
+                            <div class="invalid-feedback">
+                                Please select a category description.
+                            </div>
                         </div>
                         <!-- Status -->
                         <div class="mb-4 ecommerce-select2-dropdown">
                             <label class="form-label">Select category status</label>
                             <select id="ecommerce_category_status" name="ecommerce_category_status"
-                                class="select2 form-select" data-placeholder="Select category status">
-                                <option value="">Select category status</option>
+                                class="form-select" data-placeholder="Select category status" required>
+                                <option selected disabled value="">Select category status</option>
                                 <option value="Scheduled">Scheduled</option>
                                 <option value="Publish">Publish</option>
                                 <option value="Inactive">Inactive</option>
                             </select>
+                            <div class="invalid-feedback">
+                                Please select a category status.
+                            </div>
                         </div>
                         <!-- Submit and reset -->
                         <div class="mb-3">
                             <button type="submit" class="btn btn-primary me-sm-3 me-1 data-submit">Add</button>
-                            <button type="reset" class="btn bg-label-danger" data-bs-dismiss="offcanvas">Discard</button>
+                            <button type="reset" class="btn bg-label-danger"
+                                data-bs-dismiss="offcanvas">Discard</button>
                         </div>
                     </form>
                 </div>
@@ -130,32 +139,38 @@
                         </div>
                         <div class="modal-body">
                             <!-- Form fields for editing category -->
-                            <form id="editCategoryForm">
+                            <form id="editCategoryForm" enctype="multipart/form-data">
+                                @csrf
+                                <input type="hidden" name="edit_category_id" id="edit_category_id">
+                                <!-- Category Name -->
                                 <div class="mb-3">
-                                    <label class="form-label" for="category_name">Category Name</label>
-                                    <input type="text" class="form-control" id="edit_category_name" name="edit_category_name"
-                                        placeholder="Enter category name" aria-label="category name" />
+                                    <label class="form-label" for="edit_category_name">Category Name</label>
+                                    <input type="text" class="form-control" id="edit_category_name"
+                                        name="edit_category_name" placeholder="Enter category name"
+                                        aria-label="Category Name" />
                                 </div>
                                 <!-- Slug -->
                                 <div class="mb-3">
-                                    <label class="form-label" for="ecommerce_category_slug">Slug</label>
-                                    <input type="text" id="edit_ecommerce_category_slug" name="edit_ecommerce_category_slug"
-                                        class="form-control" placeholder="Enter slug" aria-label="slug" name="slug" />
+                                    <label class="form-label" for="edit_ecommerce_category_slug">Slug</label>
+                                    <input type="text" id="edit_ecommerce_category_slug"
+                                        name="edit_ecommerce_category_slug" class="form-control" placeholder="Enter slug"
+                                        aria-label="Slug" />
                                 </div>
-                                <!-- Image -->
+                                <!-- Image Upload -->
                                 <div class="mb-3">
-                                    <label class="form-label" for="ecommerce_category_image">Attachment</label>
+                                    <label class="form-label" for="edit_ecommerce_category_image">Attachment</label>
                                     <input class="form-control" type="file" id="edit_ecommerce_category_image"
                                         name="edit_ecommerce_category_image" />
                                     <div id="edit_image_category_preview"></div>
-
                                 </div>
+                                <!-- Category Description -->
                                 <div class="mb-3">
-                                    <label for="editCategoryDetail" class="form-label">Category Description</label>
-                                    <textarea class="form-control" name="edit_ecommerce_category_description" id="edit_ecommerce_category_description_input"></textarea>
-
+                                    <label for="edit_ecommerce_category_description" class="form-label">Category
+                                        Description</label>
+                                    <textarea class="form-control" name="edit_ecommerce_category_description"
+                                        id="edit_ecommerce_category_description_input"></textarea>
                                 </div>
-                                <!-- Status -->
+                                <!-- Category Status -->
                                 <div class="mb-4 ecommerce-select2-dropdown">
                                     <label class="form-label">Select category status</label>
                                     <select id="edit_ecommerce_category_status" name="edit_ecommerce_category_status"
@@ -167,16 +182,55 @@
                                     </select>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" id="saveChangesBtn">Save
+                                        changes</button>
+                                </div>
+                                <!-- Confirm Modal -->
+                                <div class="modal fade" id="confirmModal" tabindex="-1"
+                                    aria-labelledby="confirmModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="confirmModalLabel">Confirm Action</h5>
+
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to save changes?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">No</button>
+                                                <button type="submit" class="btn btn-primary"
+                                                    id="confirmSaveChanges">Yes</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>
-
                     </div>
                 </div>
             </div>
-
+        </div>
+    </div>
+    <!-- Confirm Delete Category Modal -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this record?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Yes, Delete</button>
+                </div>
+            </div>
         </div>
     </div>
 @endsection

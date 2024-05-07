@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -15,9 +17,10 @@ class CategoryController extends Controller
         $categories = Category::latest()->get();
         return view('admin.layout.category.allcategory', compact('categories'));
     }
-    public function GetCategoryJson(){
+    public function GetCategoryJson()
+    {
         $categories = Category::latest()->get()->toArray();
-    return response()->json(['data' => $categories]);
+        return response()->json(['data' => $categories]);
     }
     public function AddCategory()
     {
@@ -58,7 +61,10 @@ class CategoryController extends Controller
             'category_status' => $request->ecommerce_category_status
             // Add other fields as needed
         ]);
-        return redirect()->route('allcategory')->with('message', 'Category Added Successfully');
+        $categories = Category::all();
+
+        // Return JSON response with updated data
+        return response()->json($categories);
     }
     public function EditCategory($id)
     {
@@ -67,19 +73,62 @@ class CategoryController extends Controller
     }
     public function UpdateCategory(Request $request)
     {
-        $category_id = $request->category_id;
         $request->validate([
-            'category_name' => 'required|unique:categories'
+            'edit_category_id' => 'required|exists:categories,id',
+            'edit_category_name' => 'required|string|max:255',
+            'edit_ecommerce_category_slug' => 'required|string|max:255',
+            'edit_ecommerce_category_description' => 'nullable|string',
+            'edit_ecommerce_category_status' => 'required|string|in:Scheduled,Publish,Inactive',
+            'edit_ecommerce_category_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // adjust max file size as needed
         ]);
-        Category::findOrFail($category_id)->update([
-            'category_name' => $request->category_name,
-            'slug' => strtolower(str_replace(' ', '-', $request->category_name))
-        ]);
-        return redirect()->route('allcategory')->with('message', 'Category Update Successfully!');
+
+        $category = Category::findOrFail($request->edit_category_id);
+        // Remove old image if it exists
+        if ($request->hasFile('edit_ecommerce_category_image') && $category->category_image) {
+            $oldImagePath = public_path('dashboard/img/ecommerce-category-images/category/' . $category->category_image);
+            if (File::exists($oldImagePath)) {
+                File::delete($oldImagePath);
+            }
+        }
+        $category->category_name = $request->edit_category_name;
+        $category->slug = $request->edit_ecommerce_category_slug;
+        $category->description = $request->edit_ecommerce_category_description;
+        $category->category_status = $request->edit_ecommerce_category_status;
+
+        if ($request->hasFile('edit_ecommerce_category_image')) {
+            // Handle image upload
+            $image = $request->file('edit_ecommerce_category_image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('dashboard/img/ecommerce-category-images/category'), $imageName);
+            $category->category_image = $imageName;
+        }
+
+        $category->save();
+        // Fetch updated data
+        $categories = Category::all();
+
+        // Return JSON response with updated data
+        return response()->json($categories);
     }
-    public function DeleteCategory($id)
+    public function DeleteCategory(Request $request)
+    // Method to delete a category
     {
-        Category::findOrFail($id)->delete();
-        return redirect()->route('allcategory')->with('message', 'Category Deleted Successfully!');
+        $category_id = $request->input('categoryId');
+
+        $category = Category::find($category_id);
+
+        if (!$category) {
+            return response()->json(['success' => false, 'message' => 'Category not found'], 404);
+        }
+
+        // Delete category image from storage if it exists
+        if ($category->category_image) {
+            Storage::delete('dashboard/img/ecommerce-category-images/category/' . $category->category_image);
+        }
+
+        // Delete category record from database
+        $category->delete();
+
+        return response()->json(['success' => true, 'message' => 'Category deleted successfully']);
     }
 }
