@@ -47,7 +47,8 @@
                                 <th></th>
                                 <th></th>
                                 <th>Categories</th>
-                                <th class="text-nowrap text-sm-end">Total Subcategory &nbsp;</th>
+                                <th class="text-nowrap text-sm-end">Total Subcategory </th>
+                                <th class="text-nowrap text-sm-center">STATUS </th>
                                 <th class="text-lg-center">Actions</th>
                             </tr>
                         </thead>
@@ -106,8 +107,8 @@
                         <!-- Status -->
                         <div class="mb-4 ecommerce-select2-dropdown">
                             <label class="form-label">Select category status</label>
-                            <select id="ecommerce_category_status" name="ecommerce_category_status"
-                                class="form-select" data-placeholder="Select category status" required>
+                            <select id="ecommerce_category_status" name="ecommerce_category_status" class="form-select"
+                                data-placeholder="Select category status" required>
                                 <option selected disabled value="">Select category status</option>
                                 <option value="Scheduled">Scheduled</option>
                                 <option value="Publish">Publish</option>

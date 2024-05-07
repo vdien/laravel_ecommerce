@@ -6,7 +6,6 @@
 
 // Comment editor
 
-
 // Datatable (jquery)
 
 $(function () {
@@ -23,7 +22,12 @@ $(function () {
     }
 
     // Variable declaration for category list table
-    var dt_category_list_table = $('.datatables-category-list');
+    var dt_category_list_table = $('.datatables-category-list'),
+        statusObj = {
+            Publish: { title: 'Publish', class: 'bg-label-success' },
+            Scheduled: { title: 'Scheduled', class: 'bg-label-warning' },
+            Inactive: { title: 'Inactive', class: 'bg-label-danger' },
+        };
 
     //select2 for dropdowns in offcanvas
 
@@ -45,6 +49,7 @@ $(function () {
         // Show toastr notification
         toastr.success(message);
     }
+
     if (dt_category_list_table.length) {
         var dt_category = dt_category_list_table.DataTable({
             ajax: route('getcategoryjson'), // JSON file to add data
@@ -53,6 +58,7 @@ $(function () {
                 { data: '' },
                 { data: 'id' },
                 { data: 'categories' },
+                { data: 'status' },
                 { data: 'total_subcategory' },
                 { data: '' }
             ],
@@ -134,13 +140,29 @@ $(function () {
                 {
                     // Total products
                     targets: 3,
+                    width: '50px',
                     responsivePriority: 3,
                     render: function (data, type, full, meta) {
                         var $total_products = full['subcategory_count'];
-                        return '<div class="text-sm-end">' + $total_products + '</div>';
+                        return '<div class="text-sm-center">' + $total_products + '</div>';
                     }
                 },
-
+                {
+                    // Total Earnings
+                    targets: 4,
+                    width: '50px',
+                    orderable: false,
+                    render: function (data, type, full, meta) {
+                        var $status = full['category_status'];
+                        return (
+                            '<span class="badge px-2 ' +
+                            statusObj[$status].class +
+                            '" text-capitalized>' +
+                            statusObj[$status].title +
+                            '</span>'
+                        );
+                    }
+                },
                 {
                     // Actions
                     targets: -1,
@@ -150,11 +172,12 @@ $(function () {
                     render: function (data, type, full, meta) {
                         return (
                             '<div class="d-flex align-items-sm-center justify-content-sm-center">' +
-                            '<button class="btn btn-sm btn-icon delete-record me-2"><i class="ti ti-trash"></i></button>' +
-                            '<button class="btn btn-sm btn-icon edit-record" data-bs-toggle="modal" data-bs-target="#editCategoryModal" data-category-id="' + full.id + '"><i class="ti ti-edit"></i></button>' +
+                            '<button class="btn btn-sm btn-icon delete-record-category me-2" data-category-id="' + full.id + '"><i class="ti ti-trash"></i></button>' +
+                            '<button class="btn btn-sm btn-icon edit-record-category" data-bs-toggle="modal" data-bs-target="#editCategoryModal" data-category-id="' + full.id + '"><i class="ti ti-edit"></i></button>' +
                             '</div>'
                         );
                     }
+
                 }
             ],
             order: [2, 'desc'], //set any columns order asc/desc
@@ -190,7 +213,8 @@ $(function () {
                     display: $.fn.dataTable.Responsive.display.modal({
                         header: function (row) {
                             var data = row.data();
-                            return 'Details of ' + data['categories'];
+                            console.log(data)
+                            return 'Details of ' + data['category_name'];
                         }
                     }),
                     type: 'column',
@@ -246,8 +270,7 @@ $(function () {
                 }
             });
         });
-        $('.datatables-category-list tbody').on('click', '.edit-record', function () {
-
+        $('body').on('click', '.edit-record-category', function () {
             // Get the closest row to the clicked edit button
             var $row = $(this).closest('tr');
             // Get the data of the row using DataTables API
@@ -317,17 +340,18 @@ $(function () {
             $('#confirmModal').modal('show'); // Show the confirmation modal
         });
         // Delete Record
-        $('.datatables-category-list tbody').on('click', '.delete-record', function () {
+        $('body').on('click', '.delete-record-category', function () {
             var $row = $(this).closest('tr');
             var rowData = dt_category.row($row).data();
             var categoryId = rowData.id;
-
+            $('.modal').modal('hide');
             // Show the confirmation modal for delete
             $('#confirmDeleteModal').modal('show');
 
             // Set data-attribute on confirmation button to hold the category ID
             $('#confirmDelete').data('category-id', categoryId);
-        });        $('#confirmDelete').on('click', function () {
+        });
+        $('#confirmDelete').on('click', function () {
             var categoryId = $(this).data('category-id');
             // Perform the delete action (e.g., send AJAX request to delete the record)
             // Replace this with your actual delete logic
@@ -381,22 +405,20 @@ document.addEventListener("DOMContentLoaded", function () {
 //For form validation
 // Example starter JavaScript for disabling form submissions if there are invalid fields
 (function () {
-    'use strict'
-
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
     var forms = document.querySelectorAll('.needs-validation')
 
     // Loop over them and prevent submission
     Array.prototype.slice.call(forms)
-      .forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-          if (!form.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-          }
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
 
-          form.classList.add('was-validated')
-        }, false)
-      })
-  })()
+                form.classList.add('was-validated')
+            }, false)
+        })
+})()
 
