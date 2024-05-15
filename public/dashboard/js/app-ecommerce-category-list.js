@@ -42,13 +42,6 @@ $(function () {
         });
     }
 
-    // Customers List Datatable
-    function showSuccessToast(message) {
-        // Clear existing toastr notifications
-        toastr.clear();
-        // Show toastr notification
-        toastr.success(message);
-    }
 
     if (dt_category_list_table.length) {
         var dt_category = dt_category_list_table.DataTable({
@@ -143,8 +136,9 @@ $(function () {
                     width: '50px',
                     responsivePriority: 3,
                     render: function (data, type, full, meta) {
-                        var $total_products = full['subcategory_count'];
-                        return '<div class="text-sm-center">' + $total_products + '</div>';
+                        var $total_subcategory =full['subcategories_count'];
+
+                        return '<div class="text-sm-center">' + $total_subcategory + '</div>';
                     }
                 },
                 {
@@ -258,10 +252,11 @@ $(function () {
                     // Update DataTable with new data
                     dt_category.clear().rows.add(response).draw();
                     $('#offcanvasEcommerceCategoryList').offcanvas('hide'); // Hide offcanvas
-                    showSuccessToast('Category added successfully.'); // Show success message
+                    toastr.success('Category added successfully.'); // Show success message
                     //reset form add
-                    $('#image_category_preview').innerHTML = '';
+                    $('#image_category_preview').empty();
                     $('#addCategoryForm')[0].reset();
+
 
                 },
                 error: function (xhr, status, error) {
@@ -310,7 +305,7 @@ $(function () {
                 }
                 reader.readAsDataURL(file);
             } else {
-                $('#image_preview').empty();
+                $('#edit_image_category_preview').empty();
             }
         });
         $('#editCategoryForm').submit(function (e) {
@@ -328,7 +323,7 @@ $(function () {
                     dt_category.clear().rows.add(response).draw();
                     $('#editCategoryModal').modal('hide');
                     $('#confirmModal').modal('hide');
-                    showSuccessToast('Category updated successfully.');
+                    toastr.success('Category updated successfully.');
                 },
                 error: function (xhr, status, error) {
                     toastr.error(error);
@@ -347,7 +342,6 @@ $(function () {
             $('.modal').modal('hide');
             // Show the confirmation modal for delete
             $('#confirmDeleteModal').modal('show');
-
             // Set data-attribute on confirmation button to hold the category ID
             $('#confirmDelete').data('category-id', categoryId);
         });
@@ -362,8 +356,11 @@ $(function () {
                 method: 'GET',
                 data: { categoryId: categoryId },
                 success: function (response) {
+                    var rowIndex = dt_category.rows().eq(0).filter(function(index) {
+                        return dt_category.row(index).data().id === categoryId;
+                    });
                     // Handle success (e.g., remove the row from the DataTable)
-                    dt_category.row(response).remove().draw();
+                    dt_category.row(rowIndex).remove().draw();
                     $('#confirmDeleteModal').modal('hide');
                     toastr.success('Category deleted successfully.');
                 },

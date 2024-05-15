@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('subcategories', function (Blueprint $table) {
             $table->id();
-            $table->string("subcategory_name");
-            $table->string("subcategory_img");
-            $table->bigInteger("category_id");
-            $table->string("category_name");
-            $table->integer("product_count")->default(0);
-            $table->string("slug");
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->string('subcategory_name');
+            $table->string('slug')->unique();
+            $table->text('description');
+            $table->text('category_image')->nullable();
+            $table->text('category_status')->default('publish');
             $table->timestamps();
         });
     }

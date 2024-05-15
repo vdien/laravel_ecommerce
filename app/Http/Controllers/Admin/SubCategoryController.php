@@ -6,70 +6,111 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 class SubCategoryController extends Controller
 {
     //
     public function Index()
     {
         $subcategories = Subcategory::latest()->get();
-        return view('admin.layout.subcategory.allsubcategory', compact('subcategories'));
-    }
-    public function AddSubCategory()
-    {
         $categories = Category::latest()->get();
-        return view('admin.layout.subcategory.addsubcategory', compact('categories'));
+        return view('admin.layout.subcategory.allsubcategory', compact('subcategories','categories'));
+    }
+    public function GetSubCategoryJson()
+    {
+        $subcategories = Subcategory::with(['category', 'products'])->withCount('products')->get();
+        return response()->json(['data' => $subcategories]);
     }
     public function StoreSubCategory(Request $request)
     {
-        $request->validate([
-            'subcategory_name' => 'required|unique:subcategories',
-            'category_id' => 'required'
-        ]);
 
-        $category_id = $request->category_id;
-        $category_name = Category::where('id', $category_id)->value('category_name');
+        if ($request->hasFile('ecommerce_subcategory_image')) {
+            $image = $request->file('ecommerce_subcategory_image');
 
-        Subcategory::create([
+            if ($image->isValid()) {
+                $filename = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('dashboard/img/ecommerce-category-images/subcategory'), $filename);
+                $subcategoryImage = $filename;
+            } else {
+                // Handle invalid file error
+                return response()->json(['error' => 'Invalid file.'], 400);
+            }
+        } else {
+            // Handle no file error
+            return response()->json(['error' => 'No image provided.'], 400);
+        }
+
+        $description = $request->input('ecommerce_subcategory_description', 'Default description');
+
+        $subcategory = Subcategory::create([
+            'category_id' => $request->parent_subcategory,
             'subcategory_name' => $request->subcategory_name,
-            'slug' => strtolower(str_replace('', '-', $request->subcategory_name)),
-            'category_id' => $category_id,
-            'category_name' => $category_name
+            'slug' => strtolower(str_replace(' ', '-', $request->ecommerce_subcategory_slug)),
+            'description' => $description,
+            'subcategory_image' => $subcategoryImage ?? 'default_image.jpg',
+            'subcategory_status' => $request->subcategory_status
+            // Add other fields as needed
         ]);
-        Category::where('id', $category_id)->increment('subcategory_count', 1);
 
-        return redirect()->route('allsubcategory')->with('message', 'Sub Category Added Successfully');
+        $subcategories = Subcategory::with(['category', 'products'])->withCount('products')->get();
+        // Return JSON response with updated data
+        return response()->json($subcategories);
+
     }
-    public function EditSubCategory($id)
-    {
-        $categories = Category::latest()->get();
-        $subcategory_info = Subcategory::findOrFail($id);
-        return view('admin.layout.subcategory.editsubcategory', compact('subcategory_info', 'categories'));
-    }
+
     public function UpdateSubCategory(Request $request)
     {
+        $description = $request->input('edit_ecommerce_subcategory_description_input', 'Default description');
+        // Find the subcategory by its ID
+        $subcategory = Subcategory::findOrFail($request->edit_subcategory_id);
+        if ($request->hasFile('edit_ecommerce_subcategory_image') && $subcategory->edit_subcategory_name) {
+            $oldImagePath = public_path('dashboard/img/ecommerce-category-images/subcategory/' . $subcategory->category_image);
+            if (File::exists($oldImagePath)) {
+                File::delete($oldImagePath);
+            }
+        }
+        if ($request->hasFile('edit_ecommerce_subcategory_image')) {
+            // Handle image upload
+            $image = $request->file('edit_ecommerce_category_image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('dashboard/img/ecommerce-category-images/subcategory'), $imageName);
+            $subcategory->subcategory_image = $imageName;
+        }
+        // Update the subcategory fields
+        $subcategory->category_id = $request->edit_parent_subcategory;
+        $subcategory->subcategory_name = $request->edit_subcategory_name;
+        $subcategory->slug = strtolower(str_replace(' ', '-', $request->edit_ecommerce_subcategory_slug));
+        $subcategory->description = $description;
+        // If a new image is provided, update the image field
 
-        $category_id = $request->category_id;
-        $category_name = Category::where('id', $category_id)->value('category_name');
-        $subcategory_id = $request->subcategory_id;
-        $request->validate([
-            'subcategory_name' => 'required|unique:subcategories',
-            'category_id' => 'required',
-        ]);
+        $subcategory->subcategory_status = $request->edit_ecommerce_subcategory_status;
+        // Save the changes
+        $subcategory->save();
+        $subcategories = Subcategory::with(['category', 'products'])->withCount('products')->get();
+        // Return JSON response with updated data
+        return response()->json($subcategories);
 
-        Subcategory::findOrFail($subcategory_id)->update([
-            'category_id' => $category_id,
-            'category_name' => $category_name,
-            'subcategory_name' => $request->subcategory_name,
-            'slug' => strtolower(str_replace(' ', '-', $request->subcategory_name))
-        ]);
-        return redirect()->route('allsubcategory')->with('message', 'Category Update Successfully!');
     }
-    public function DeleteSubCategory($id)
+    public function DeleteSubCategory(Request $request)
+    // Method to delete a subcategory
     {
-        $category_id = Subcategory::where('id', $id)->value('category_id');
-        Subcategory::findOrFail($id)->delete();
-        Category::where('id', $category_id)->decrement('subcategory_count', 1);
-        return redirect()->route('allsubcategory')->with('message', 'Category Deleted Successfully!');
+        $subcategory_id = $request->input('subcategoryId');
+
+        $subcategory = Subcategory::find($subcategory_id);
+
+        if (!$subcategory) {
+            return response()->json(['success' => false, 'message' => 'Subcategory not found'], 404);
+        }
+
+        // Delete category image from storage if it exists
+        if ($subcategory->subcategory_image) {
+            File::delete(public_path('dashboard/img/ecommerce-category-images/subcategory/' . $subcategory->subcategory_image));
+        }
+
+        // Delete category record from database
+        $subcategory->delete();
+
+        return response()->json(['success' => true, 'message' => 'Subategory deleted successfully']);
     }
 }

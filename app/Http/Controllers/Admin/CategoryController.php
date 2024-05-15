@@ -19,18 +19,14 @@ class CategoryController extends Controller
     }
     public function GetCategoryJson()
     {
-        $categories = Category::latest()->get()->toArray();
+        $categories = Category::withCount('subcategories')->latest()->get();
         return response()->json(['data' => $categories]);
-    }
-    public function AddCategory()
-    {
-        return view('admin.layout.category.addcategory');
     }
     public function StoreCategory(Request $request)
     {
         $request->validate([
             'category_name' => 'required|unique:categories',
-            'ecommerce_category_image' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // Adjust the validation rules as per your requirements
+            'ecommerce_category_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048' // Adjust the validation rules as per your requirements
 
         ]);
         // Handle category image upload
@@ -61,15 +57,9 @@ class CategoryController extends Controller
             'category_status' => $request->ecommerce_category_status
             // Add other fields as needed
         ]);
-        $categories = Category::all();
-
+        $categories = Category::withCount('subcategories')->latest()->get();
         // Return JSON response with updated data
         return response()->json($categories);
-    }
-    public function EditCategory($id)
-    {
-        $category_info = Category::findOrFail($id);
-        return view('admin.layout.category.editcategory', compact('category_info'));
     }
     public function UpdateCategory(Request $request)
     {
@@ -79,7 +69,7 @@ class CategoryController extends Controller
             'edit_ecommerce_category_slug' => 'required|string|max:255',
             'edit_ecommerce_category_description' => 'nullable|string',
             'edit_ecommerce_category_status' => 'required|string|in:Scheduled,Publish,Inactive',
-            'edit_ecommerce_category_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // adjust max file size as needed
+            'edit_ecommerce_category_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // adjust max file size as needed
         ]);
 
         $category = Category::findOrFail($request->edit_category_id);
@@ -105,8 +95,7 @@ class CategoryController extends Controller
 
         $category->save();
         // Fetch updated data
-        $categories = Category::all();
-
+        $categories = Category::withCount('subcategories')->latest()->get();
         // Return JSON response with updated data
         return response()->json($categories);
     }
@@ -123,7 +112,7 @@ class CategoryController extends Controller
 
         // Delete category image from storage if it exists
         if ($category->category_image) {
-            Storage::delete('dashboard/img/ecommerce-category-images/category/' . $category->category_image);
+            File::delete(public_path('dashboard/img/ecommerce-category-images/category/' . $category->category_image));
         }
 
         // Delete category record from database

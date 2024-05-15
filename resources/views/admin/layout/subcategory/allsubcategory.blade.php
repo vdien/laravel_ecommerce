@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/quill/typography.css') }} " />
     <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/quill/katex.css') }} " />
     <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/quill/editor.css') }} " />
-
+    <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/toastr/toastr.css') }}" />
     <link rel="stylesheet" href="{{ asset('dashboard/vendor/css/pages/app-ecommerce.css') }}" />
 @endsection
 @section('page_script')
@@ -24,6 +24,7 @@
     <script src="{{ asset('dashboard/vendor/libs/@form-validation/auto-focus.js') }} "></script>
     <script src="{{ asset('dashboard/vendor/libs/quill/katex.js') }} "></script>
     <script src="{{ asset('dashboard/vendor/libs/quill/quill.js') }} "></script>
+    <script src="{{ asset('dashboard/vendor/libs/toastr/toastr.js') }} "></script>
     <!-- Page JS -->
     <script src="{{ asset('dashboard/js/main.js') }} "></script>
 
@@ -34,20 +35,21 @@
 @endsection
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="py-3 mb-2"><span class="text-muted fw-light">eCommerce /</span> Category List</h4>
+        <h4 class="py-3 mb-2"><span class="text-muted fw-light">eCommerce /</span>SubCategory List</h4>
 
-        <div class="app-ecommerce-category">
+        <div class="app-ecommerce-subcategory">
             <!-- Category List Table -->
             <div class="card">
                 <div class="card-datatable table-responsive">
-                    <table class="datatables-category-list table border-top">
+                    <table class="datatables-subcategory-list table border-top">
                         <thead>
                             <tr>
                                 <th></th>
                                 <th></th>
-                                <th>Categories</th>
+                                <th>Sub Categories</th>
+                                <th class="text-nowrap text-sm-end">categories</th>
                                 <th class="text-nowrap text-sm-end">Total Products &nbsp;</th>
-                                <th class="text-nowrap text-sm-end">Total Earning</th>
+                                <th class="text-nowrap text-sm-end">Status</th>
                                 <th class="text-lg-center">Actions</th>
                             </tr>
                         </thead>
@@ -55,77 +57,83 @@
                 </div>
             </div>
             <!-- Offcanvas to add new customer -->
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEcommerceCategoryList"
-                aria-labelledby="offcanvasEcommerceCategoryListLabel">
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEcommerceSubCategoryList"
+                aria-labelledby="offcanvasEcommerceSubCategoryListLabel">
                 <!-- Offcanvas Header -->
                 <div class="offcanvas-header py-4">
-                    <h5 id="offcanvasEcommerceCategoryListLabel" class="offcanvas-title">Add Category</h5>
+                    <h5 id="offcanvasSubEcommerceSubCategoryListLabel" class="offcanvas-title">Add SubCategory</h5>
                     <button type="button" class="btn-close bg-label-secondary text-reset" data-bs-dismiss="offcanvas"
                         aria-label="Close"></button>
                 </div>
                 <!-- Offcanvas Body -->
                 <div class="offcanvas-body border-top">
-                    <form class="pt-0" id="eCommerceCategoryListForm" onsubmit="return true">
+                    <form class="pt-0 needs-validation" id="addSubcategoryForm" enctype="multipart/form-data" novalidate>
+                        @csrf
                         <!-- Title -->
                         <div class="mb-3">
-                            <label class="form-label" for="ecommerce-category-title">Title</label>
-                            <input type="text" class="form-control" id="ecommerce-category-title"
-                                placeholder="Enter category title" name="categoryTitle" aria-label="category title" />
+                            <label class="form-label" for="subcategory_name">SubCategory Name</label>
+                            <input type="text" class="form-control" name="subcategory_name"
+                                placeholder="Enter subcategory name" aria-label="subcategory name" required />
+                            <div class="invalid-feedback">
+                                Please select a subcategory name.
+                            </div>
                         </div>
                         <!-- Slug -->
                         <div class="mb-3">
-                            <label class="form-label" for="ecommerce-category-slug">Slug</label>
-                            <input type="text" id="ecommerce-category-slug" class="form-control" placeholder="Enter slug"
-                                aria-label="slug" name="slug" />
+                            <label class="form-label" for="ecommerce_subcategory_slug">Slug</label>
+                            <input type="text" id="ecommerce_subcategory_slug" name="ecommerce_subcategory_slug"
+                                class="form-control" placeholder="Enter slug" aria-label="slug" name="slug" required />
+                            <div class="invalid-feedback">
+                                Please select a category slug.
+                            </div>
                         </div>
                         <!-- Image -->
                         <div class="mb-3">
-                            <label class="form-label" for="ecommerce-category-image">Attachment</label>
-                            <input class="form-control" type="file" id="ecommerce-category-image" />
+                            <label class="form-label" for="ecommerce_subcategory_image">Image</label>
+                            <input class="form-control" type="file" id="ecommerce_subcategory_image"
+                                name="ecommerce_subcategory_image" required />
+                            <div id="image_subcategory_preview"></div>
+                            <div class="invalid-feedback">
+                                Please select a category image.
+                            </div>
                         </div>
-                        <!-- Parent category -->
+                        <!-- Parent subcategory -->
                         <div class="mb-3 ecommerce-select2-dropdown">
-                            <label class="form-label" for="ecommerce-category-parent-category">Parent category</label>
-                            <select id="ecommerce-category-parent-category" class="select2 form-select"
-                                data-placeholder="Select parent category">
-                                <option value="">Select parent Category</option>
-                                <option value="Household">Household</option>
-                                <option value="Management">Management</option>
-                                <option value="Electronics">Electronics</option>
-                                <option value="Office">Office</option>
-                                <option value="Automotive">Automotive</option>
+                            <label class="form-label" for="parent_subcategory">Parent Subcategory</label>
+                            <select id="parent_subcategory" id="ecommerce_subcategory_parent_subcategory"
+                                name="parent_subcategory"class="form-select" data-placeholder="Select parent subcategory"
+                                required>
+                                <option selected disabled value="">Select parent Category</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                @endforeach
                             </select>
+                            <div class="invalid-feedback">
+                                Please select a Parent subcategory.
+                            </div>
                         </div>
                         <!-- Description -->
                         <div class="mb-3">
-                            <label class="form-label">Description</label>
-                            <div class="form-control p-0 py-1">
-                                <div class="comment-editor border-0" id="ecommerce-category-description"></div>
-                                <div class="comment-toolbar border-0">
-                                    <div class="d-flex justify-content-end">
-                                        <span class="ql-formats me-0">
-                                            <button class="ql-bold"></button>
-                                            <button class="ql-italic"></button>
-                                            <button class="ql-underline"></button>
-                                            <button class="ql-list" value="ordered"></button>
-                                            <button class="ql-list" value="bullet"></button>
-                                            <button class="ql-link"></button>
-                                            <button class="ql-image"></button>
-                                        </span>
-                                    </div>
-                                </div>
+                            <label for="editCategoryDetail" class="form-label">Category Description</label>
+                            <textarea class="form-control" name="ecommerce_subcategory_description" id="ecommerce_subcategory_description_input"
+                                required></textarea>
+                            <div class="invalid-feedback">
+                                Please select a subcategory description.
                             </div>
                         </div>
                         <!-- Status -->
                         <div class="mb-4 ecommerce-select2-dropdown">
-                            <label class="form-label">Select category status</label>
-                            <select id="ecommerce-category-status" class="select2 form-select"
-                                data-placeholder="Select category status">
-                                <option value="">Select category status</option>
+                            <label class="form-label">Select subcategory status</label>
+                            <select id="subcategory_status" name="subcategory_status" class="form-select"
+                                data-placeholder="Select subcategory status" required>
+                                <option value="">Select subcategory status</option>
                                 <option value="Scheduled">Scheduled</option>
                                 <option value="Publish">Publish</option>
                                 <option value="Inactive">Inactive</option>
                             </select>
+                            <div class="invalid-feedback">
+                                Please select a subcategory status.
+                            </div>
                         </div>
                         <!-- Submit and reset -->
                         <div class="mb-3">
@@ -136,47 +144,117 @@
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pages/</span> All Sub Category</h4>
-        <div class="card">
-            <h5 class="card-header">Available Sub Category Information </h5>
-            @if (@session()->has('message'))
-                <div class="alert alert-success">
-                    {{ session()->get('message') }}
+            <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editSubcategoryModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editSubcategoryModalLabel">Edit Subcategory</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Form fields for editing category -->
+                            <form id="editSubcategoryForm" enctype="multipart/form-data">
+                                @csrf
+                                <input type="hidden" name="edit_subcategory_id" id="edit_subcategory_id">
+                                <!-- Category Name -->
+                                <div class="mb-3">
+                                    <label class="form-label" for="edit_category_name">Subcategory Name</label>
+                                    <input type="text" class="form-control" id="edit_subcategory_name"
+                                        name="edit_subcategory_name" placeholder="Enter subcategory name"
+                                        aria-label="Category Name" />
+                                </div>
+                                <!-- Slug -->
+                                <div class="mb-3">
+                                    <label class="form-label" for="edit_ecommerce_category_slug">Slug</label>
+                                    <input type="text" id="edit_ecommerce_subcategory_slug"
+                                        name="edit_ecommerce_subcategory_slug" class="form-control"
+                                        placeholder="Enter slug" aria-label="Slug" />
+                                </div>
+                                <!-- Image Upload -->
+                                <div class="mb-3">
+                                    <label class="form-label" for="edit_ecommerce_subcategory_image">Attachment</label>
+                                    <input class="form-control" type="file" id="edit_ecommerce_subcategory_image"
+                                        name="edit_ecommerce_subcategory_image" />
+                                    <div id="edit_image_subcategory_preview"></div>
+                                </div>
+                                <div class="mb-3 ecommerce-select2-dropdown">
+                                    <label class="form-label" for="edit_parent_subcategory">Parent Subcategory</label>
+                                    <select id="edit_parent_subcategory" name="edit_parent_subcategory"
+                                        class="form-select select2" data-placeholder="Select parent subcategory">
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <!-- Category Description -->
+                                <div class="mb-3">
+                                    <label for="edit_ecommerce_category_description" class="form-label">Category
+                                        Description</label>
+                                    <textarea class="form-control" name="edit_ecommerce_subcategory_description"
+                                        id="edit_ecommerce_subcategory_description_input"></textarea>
+                                </div>
+                                <!-- Category Status -->
+                                <div class="mb-4 ecommerce-select2-dropdown">
+                                    <label class="form-label">Select category status</label>
+                                    <select id="edit_ecommerce_subcategory_status"
+                                        name="edit_ecommerce_subcategory_status" class="select2 form-select"
+                                        data-placeholder="Select category status">
+                                        <option value="">Select category status</option>
+                                        <option value="Scheduled">Scheduled</option>
+                                        <option value="Publish">Publish</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" id="saveChangesBtn">Save
+                                        changes</button>
+                                </div>
+                                <!-- Confirm Modal -->
+                                <div class="modal fade" id="confirmModal" tabindex="-1"
+                                    aria-labelledby="confirmModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="confirmModalLabel">Confirm Action</h5>
+
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to save changes?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">No</button>
+                                                <button type="submit" class="btn btn-primary"
+                                                    id="confirmSaveChanges">Yes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            @endif
-            <div class="table-responsive text-nowrap">
-                <table class="table">
-                    <thead class="table-light">
-                        <tr>
-
-                            <th>Id</th>
-                            <th>Sub Category Name</th>
-                            <th>Slug</th>
-                            <th>Product</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-border-bottom-0">
-                        @foreach ($subcategories as $subcategory)
-                            <tr>
-                                <td>{{ $subcategory->id }}</td>
-                                <td>{{ $subcategory->subcategory_name }}</td>
-                                <td>{{ $subcategory->category_name }}</td>
-                                <td>{{ $subcategory->product_count }}</td>
-                                <td>
-                                    <a href="{{ route('editsubcategory', $subcategory->id) }}"
-                                        class="btn btn-primary">Edit</a>
-                                    <a href="{{ route('deletesubcategory', $subcategory->id) }}"
-                                        class="btn btn-warning">Delete</a>
-                                </td>
-                            </tr>
-                        @endforeach
-
-                    </tbody>
-                </table>
+            </div>
+            <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete this record?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                            <button type="button" class="btn btn-danger" id="confirmDelete">Yes, Delete</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

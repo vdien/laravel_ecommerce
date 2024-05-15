@@ -74,17 +74,14 @@ Route::middleware(['auth','role:admin'])->group(function () {
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/admin/all-category', 'Index')->name("allcategory");
         Route::get('/admin/get-category-json', 'GetCategoryJson')->name("getcategoryjson");
-        Route::get('/admin/add-category', 'AddCategory')->name("addcategory");
         Route::post('/admin/store-category', 'StoreCategory')->name('storecategory');
-        route::get('/admin/edit-category/{id}', 'EditCategory')->name('editcategory');
         Route::post('/admin/update-category', 'UpdateCategory')->name('updatecategory');
         Route::get('/admin/delete-category/{id}', 'DeleteCategory')->name('deletecategory');
     });
     Route::controller(SubCategoryController::class)->group(function () {
         Route::get('/admin/all-subcategory', 'Index')->name("allsubcategory");
-        Route::get('/admin/add-subcategory', 'AddSubCategory')->name("addsubcategory");
+        Route::get('/admin/get-subcategory-json', 'GetSubCategoryJson')->name("getsubcategoryjson");
         Route::post('/admin/store-subcategory', 'StoreSubCategory')->name('storesubcategory');
-        route::get('/admin/edit-subcategory/{id}', 'EditSubCategory')->name('editsubcategory');
         Route::post('/admin/update-subcategory', 'UpdateSubCategory')->name('updatesubcategory');
         Route::get('/admin/delete-subcategory/{id}', 'DeleteSubCategory')->name('deletesubcategory');
     });
