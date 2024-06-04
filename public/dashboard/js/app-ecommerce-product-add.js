@@ -6,25 +6,37 @@
 //Javascript to handle the e-commerce product add page
 
 (function () {
-  // Comment editor
 
-  const commentEditor = document.querySelector('.comment-editor');
+    // Initialize Quill editors
+    const shortDescription = document.querySelector('.short-description-editor');
+    let shortQuill;
+    if (shortDescription) {
+        shortQuill = new Quill(shortDescription, {
+            modules: {
+                toolbar: '.comment-short'
+            },
+            placeholder: 'Product Short Description',
+            theme: 'snow'
+        });
+    }
 
-  if (commentEditor) {
-    new Quill(commentEditor, {
-      modules: {
-        toolbar: '.comment-toolbar'
-      },
-      placeholder: 'Product Description',
-      theme: 'snow'
-    });
-  }
+    const longDescription = document.querySelector('.long-description-editor');
+    let longQuill;
+    if (longDescription) {
+        longQuill = new Quill(longDescription, {
+            modules: {
+                toolbar: '.comment-long'
+            },
+            placeholder: 'Product Long Description',
+            theme: 'snow'
+        });
+    }
 
-  // previewTemplate: Updated Dropzone default previewTemplate
+    // previewTemplate: Updated Dropzone default previewTemplate
 
-  // ! Don't change it unless you really know what you are doing
+    // ! Don't change it unless you really know what you are doing
 
-  const previewTemplate = `<div class="dz-preview dz-file-preview">
+    const previewTemplate = `<div class="dz-preview dz-file-preview">
 <div class="dz-details">
   <div class="dz-thumbnail">
     <img data-dz-thumbnail>
@@ -41,98 +53,99 @@
 </div>
 </div>`;
 
-  // ? Start your code from here
+    // ? Start your code from here
 
-  // Basic Dropzone
+    // Basic Tags
 
-  const dropzoneBasic = document.querySelector('#dropzone-basic');
-  if (dropzoneBasic) {
-    const myDropzone = new Dropzone(dropzoneBasic, {
-      previewTemplate: previewTemplate,
-      parallelUploads: 1,
-      maxFilesize: 5,
-      acceptedFiles: '.jpg,.jpeg,.png,.gif',
-      addRemoveLinks: true,
-      maxFiles: 1
-    });
-  }
+    const tagifyBasicEl = document.querySelector('#ecommerce_product_tags');
+    const TagifyBasic = new Tagify(tagifyBasicEl);
 
-  // Basic Tags
+    // Flatpickr
 
-  const tagifyBasicEl = document.querySelector('#ecommerce-product-tags');
-  const TagifyBasic = new Tagify(tagifyBasicEl);
+    // Datepicker
+    const date = new Date();
 
-  // Flatpickr
+    const productDate = document.querySelector('.product-date');
 
-  // Datepicker
-  const date = new Date();
-
-  const productDate = document.querySelector('.product-date');
-
-  if (productDate) {
-    productDate.flatpickr({
-      monthSelectorType: 'static',
-      defaultDate: date
-    });
-  }
+    if (productDate) {
+        productDate.flatpickr({
+            monthSelectorType: 'static',
+            defaultDate: date
+        });
+    }
 })();
 
 //Jquery to handle the e-commerce product add page
 
-$(function () {
-  // Select2
-  var select2 = $('.select2');
-  if (select2.length) {
-    select2.each(function () {
-      var $this = $(this);
-      $this.wrap('<div class="position-relative"></div>').select2({
-        dropdownParent: $this.parent(),
-        placeholder: $this.data('placeholder') // for dynamic placeholder
-      });
+
+function addSizeQuantityField() {
+    const container = document.getElementById('size-quantity-container');
+    const newRow = document.createElement('div');
+    newRow.className = 'row mb-3';
+
+    newRow.innerHTML = `
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="size[]" placeholder="Size">
+                </div>
+                <div class="col-sm-4">
+                    <input type="number" class="form-control" name="quantity[]" placeholder="Quantity">
+                </div>
+                <div class="col-sm-4">
+                    <button type="button" class="btn btn-danger" onclick="removeSizeQuantityField(this)">Remove</button>
+                </div>
+            `;
+
+    container.appendChild(newRow);
+}
+document.getElementById('inStockSwitch').addEventListener('change', function () {
+    document.getElementById('productStock').value = this.checked ? 1 : 0;
+});
+
+function removeSizeQuantityField(button) {
+    const row = button.parentElement.parentElement;
+    row.remove();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    function previewImages(input, previewContainer) {
+        // Clear the existing previews
+        previewContainer.innerHTML = '';
+
+        // Ensure files are selected
+        if (input.files) {
+            Array.from(input.files).forEach(file => {
+                if (!file.type.startsWith('image/')) {
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const col = document.createElement('div');
+                    col.classList.add('col-4'); // Adjust column size as needed
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('img-thumbnail'); // Add any additional classes
+                    img.style.width = '100%'; // Ensure image fits the container
+                    col.appendChild(img);
+                    previewContainer.appendChild(col);
+                }
+                reader.readAsDataURL(file);
+            });
+        }
+    }
+
+    // Select file inputs and preview containers
+    const productImagesInput = document.getElementById('product_images');
+    const productImagesPreview = document.getElementById('imagePreviewRow');
+    const productImagesChildInput = document.getElementById('product_images_child');
+    const productImagesChildPreview = document.getElementById('imagePreviewRowChild');
+
+    // Add event listeners to file inputs
+    productImagesInput.addEventListener('change', function () {
+        previewImages(productImagesInput, productImagesPreview);
     });
-  }
 
-  var formRepeater = $('.form-repeater');
-
-  // Form Repeater
-  // ! Using jQuery each loop to add dynamic id and class for inputs. You may need to improve it based on form fields.
-  // -----------------------------------------------------------------------------------------------------------------
-
-  if (formRepeater.length) {
-    var row = 2;
-    var col = 1;
-    formRepeater.on('submit', function (e) {
-      e.preventDefault();
+    productImagesChildInput.addEventListener('change', function () {
+        previewImages(productImagesChildInput, productImagesChildPreview);
     });
-    formRepeater.repeater({
-      show: function () {
-        var fromControl = $(this).find('.form-control, .form-select');
-        var formLabel = $(this).find('.form-label');
-
-        fromControl.each(function (i) {
-          var id = 'form-repeater-' + row + '-' + col;
-          $(fromControl[i]).attr('id', id);
-          $(formLabel[i]).attr('for', id);
-          col++;
-        });
-
-        row++;
-        $(this).slideDown();
-        $('.select2-container').remove();
-        $('.select2.form-select').select2({
-          placeholder: 'Placeholder text'
-        });
-        $('.select2-container').css('width', '100%');
-        $('.form-repeater:first .form-select').select2({
-          dropdownParent: $(this).parent(),
-          placeholder: 'Placeholder text'
-        });
-        $('.position-relative .select2').each(function () {
-          $(this).select2({
-            dropdownParent: $(this).closest('.position-relative')
-          });
-        });
-      }
-    });
-  }
 });

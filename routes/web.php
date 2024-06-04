@@ -90,9 +90,6 @@ Route::middleware(['auth','role:admin'])->group(function () {
         Route::get('/admin/all-products-json', 'getProductJson')->name("allproductsjson");
         Route::get('/admin/add-product', 'AddProduct')->name("addproduct");
         Route::post('/admin/store-product', 'StoreProduct')->name('storeproduct');
-        route::get('/admin/edit-product-image/{id}', 'EditProductImg')->name('editproductimg');
-        Route::post('/admin/update-product-image', 'UpdateProductImg')->name('updateproductimg');
-        route::get('/admin/edit-product/{id}', 'EditProduct')->name('editproduct');
         Route::post('/admin/update-product', 'UpdateProduct')->name('updateproduct');
         Route::get('/admin/delete-product/{id}', 'DeleteProduct')->name('deleteproduct');
     });

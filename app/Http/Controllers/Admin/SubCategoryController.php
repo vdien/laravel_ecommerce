@@ -7,7 +7,6 @@ use App\Models\Category;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 class SubCategoryController extends Controller
 {
     //
@@ -61,10 +60,10 @@ class SubCategoryController extends Controller
 
     public function UpdateSubCategory(Request $request)
     {
-        $description = $request->input('edit_ecommerce_subcategory_description_input', 'Default description');
+        $description = $request->input('edit_subcategory_description_input', 'Default description');
         // Find the subcategory by its ID
         $subcategory = Subcategory::findOrFail($request->edit_subcategory_id);
-        if ($request->hasFile('edit_ecommerce_subcategory_image') && $subcategory->edit_subcategory_name) {
+        if ($request->hasFile('edit_ecommerce_subcategory_image')) {
             $oldImagePath = public_path('dashboard/img/ecommerce-category-images/subcategory/' . $subcategory->category_image);
             if (File::exists($oldImagePath)) {
                 File::delete($oldImagePath);
@@ -77,6 +76,7 @@ class SubCategoryController extends Controller
             $image->move(public_path('dashboard/img/ecommerce-category-images/subcategory'), $imageName);
             $subcategory->subcategory_image = $imageName;
         }
+
         // Update the subcategory fields
         $subcategory->category_id = $request->edit_parent_subcategory;
         $subcategory->subcategory_name = $request->edit_subcategory_name;

@@ -12,11 +12,11 @@ class Product extends Model
         'product_name',
         'product_short_des',
         'product_long_des',
+        'tags',
         'price',
+        'discount_price',
+        'stock',
         'sku',
-        'product_category_name',
-        'product_subcategory_name',
-        'product_category_id',
         'product_subcategory_id',
         'product_img',
         'product_img_child',
@@ -25,8 +25,18 @@ class Product extends Model
         'status',
         'slug',
     ];
+    protected $appends = ['total_quantity'];
+
     public function sizes()
     {
         return $this->hasMany(Size::class, 'product_id');
+    }
+    public function getTotalQuantityAttribute()
+    {
+        return $this->sizes->sum('quantity');
+    }
+    public function subcategory()
+    {
+        return $this->belongsTo(Subcategory::class, 'product_subcategory_id');
     }
 }

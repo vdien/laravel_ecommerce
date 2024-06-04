@@ -13,7 +13,7 @@ if (commentEditor) {
         modules: {
             toolbar: '.comment-toolbar'
         },
-        placeholder: 'Enter category description...',
+        placeholder: 'Enter subcategory description...',
         theme: 'snow'
     });
 }
@@ -95,7 +95,7 @@ $(function () {
                     }
                 },
                 {
-                    // Categories and Category Detail
+                    // subCategories and Subcategory Detail
                     targets: 2,
                     responsivePriority: 2,
                     render: function (data, type, full, meta) {
@@ -104,7 +104,7 @@ $(function () {
                             $image = full['subcategory_image'],
                             $id = full['id'];
                         if ($image) {
-                            // For Product image
+                            // For subcategory image
                             var $output =
                                 '<img src="' +
                                 assetsPath +
@@ -114,7 +114,7 @@ $(function () {
                                 $id +
                                 '" class="rounded-2">';
                         } else {
-                            // For Product badge
+                            // For subcategory badge
                             var stateNum = Math.floor(Math.random() * 6);
                             var states = ['success', 'danger', 'warning', 'info', 'dark', 'primary', 'secondary'];
                             var $state = states[stateNum],
@@ -123,7 +123,7 @@ $(function () {
                             $initials = (($initials.shift() || '') + ($initials.pop() || '')).toUpperCase();
                             $output = '<span class="avatar-initial rounded-2 bg-label-' + $state + '">' + $initials + '</span>';
                         }
-                        // Creates full output for Categories and Category Detail
+                        // Creates full output for subCategories and Subcategory Detail
                         var $row_output =
                             '<div class="d-flex align-items-center">' +
                             '<div class="avatar-wrapper me-2 rounded-2 bg-label-secondary">' +
@@ -209,7 +209,7 @@ $(function () {
             language: {
                 sLengthMenu: '_MENU_',
                 search: '',
-                searchPlaceholder: 'Search Category'
+                searchPlaceholder: 'Search Subcategory'
             },
             // Button for offcanvas
             buttons: [
@@ -276,7 +276,7 @@ $(function () {
                 $('#addSubcategoryForm')[0].reset();
                 $('#image_subcategory_preview').empty();
                 dt_subcategory.clear().rows.add(response).draw();
-                toastr.success('Category added successfully.'); // Show success message
+                toastr.success('Subcategory added successfully.'); // Show success message
 
 
             },
@@ -288,24 +288,22 @@ $(function () {
     });
     $('body').on('click', '.edit-record-subcategory', function () {
         // Get the closest row to the clicked edit button
-        var $row = $(this).closest('tr');
+        let $row = $(this).closest('tr');
         // Get the data of the row using DataTables API
-        var rowData = dt_subcategory.row($row).data();
-        console.log(rowData)
+        let rowData = dt_subcategory.row($row).data();
         // Get the subcategory name and detail from the row data
-        var subcategoryId = rowData.id
-        var subcategoryName = rowData.subcategory_name;
-        var subcategorySlug = rowData.slug;
-        var subcategoryDetail = rowData.description;
-        var subcategoryStatus = rowData.subcategory_status;
-        var parentSubcategory = rowData.category.id;
-        console.log(parentSubcategory)
-        var subcategoryImage = rowData.subcategory_image;
+        let subcategoryId = rowData.id
+        let subcategoryName = rowData.subcategory_name;
+        let subcategorySlug = rowData.slug;
+        let subcategoryDetail = rowData.description;
+        let subcategoryStatus = rowData.subcategory_status;
+        let parentSubcategory = rowData.category.id;
+        let subcategoryImage = rowData.subcategory_image;
         // Populate the modal with data from the row
         $('#edit_subcategory_id').val(subcategoryId);
         $('#edit_subcategory_name').val(subcategoryName);
         $('#edit_ecommerce_subcategory_slug').val(subcategorySlug);
-        $('#edit_ecommerce_subcategory_description_input').val(subcategoryDetail);
+        $('#edit_subcategory_description_input').val(subcategoryDetail);
         // Set image preview
         if (subcategoryImage) {
             $('#edit_image_subcategory_preview').html('<img src="' +
@@ -332,6 +330,7 @@ $(function () {
             $('#edit_image_subcategory_preview').empty();
         }
     });
+
     $('#editSubcategoryForm').submit(function (e) {
         e.preventDefault(); // Prevent the default form submission
 
@@ -347,7 +346,7 @@ $(function () {
                 dt_subcategory.clear().rows.add(response).draw();
                 $('#editCategoryModal').modal('hide');
                 $('#confirmModal').modal('hide');
-                toastr.success('Category updated successfully.');
+                toastr.success('Subcategory updated successfully.');
             },
             error: function (xhr, status, error) {
                 toastr.error(error);
@@ -388,7 +387,7 @@ $(function () {
                 // Handle success (e.g., remove the row from the DataTable)
                 dt_subcategory.row(rowIndex).remove().draw();
                 $('#confirmDeleteModal').modal('hide');
-                toastr.success('Category deleted successfully.');
+                toastr.success('Subcategory deleted successfully.');
             },
             error: function (xhr, status, error) {
                 toastr.error(error);

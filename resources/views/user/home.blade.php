@@ -2,7 +2,7 @@
 @section('main-content')
     <!-- ##### Welcome Area Start ##### -->
     <section class="welcome_area bg-img background-overlay"
-        style="background-image: url({{ asset('home/img/bg-img/bgjd4.jpg') }});">
+        style="background-image: url({{ asset('home/img/bg-img/ec1459d90b2d10d904cdd09981cac08c.jpg') }});">
         {{-- <div class="container h-100">
             <div class="row h-100 align-items-center">
                 <div class="col-12">
