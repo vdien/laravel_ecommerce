@@ -175,7 +175,7 @@
         <div class="container">
             <div class="col-12">
                 <div class="section-heading text-center">
-                    <h2>Popular Products</h2>
+                    <h2>Sản phẩm nổi bật</h2>
                 </div>
             </div>
             <div class="popular-products-slides owl-carousel">
@@ -185,10 +185,10 @@
                         <!-- Product Image -->
                         <a href="{{ route('singleproduct', [$product->id, $product->slug]) }}">
                             <div class="product-img">
-                                <img src="{{ asset('/dashboard/img/ecommerce-product-images/product/' . $product_info->product_img) }}"
+                                <img src="{{ asset('/dashboard/img/ecommerce-product-images/product/' . $product->product_img) }}"
                                     alt="">
                                 <img class="hover-img"
-                                    src="{{ asset('/dashboard/img/ecommerce-product-images/product/' . $product_info->product_img) }}"
+                                    src="{{ asset('/dashboard/img/ecommerce-product-images/product/' . $product->product_img) }}"
                                     alt="">
                                 <div class="product-favourite">
                                     <a href="#" class="favme fa fa-heart"></a>
