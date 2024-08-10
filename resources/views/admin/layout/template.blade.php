@@ -38,6 +38,7 @@
     <link rel="stylesheet" href="{{ asset('dashboard/css/demo.css') }} " />
 
     <!-- Vendors CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Helpers -->
     <script src="{{ asset('dashboard/vendor/js/helpers.js') }} "></script>
@@ -58,7 +59,7 @@
 
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo">
-                    <a href="index.html" class="app-brand-link">
+                    <a href="{{route('admindashboard')}}" class="app-brand-link">
                         <span class="app-brand-logo demo">
                             <svg width="32" height="22" viewBox="0 0 32 22" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -109,11 +110,7 @@
                                             <div data-i18n="Product List">Product List</div>
                                         </a>
                                     </li>
-                                    <li class="menu-item">
-                                        <a href="{{route('addproduct')}}" class="menu-link">
-                                            <div data-i18n="Add Product">Add Product</div>
-                                        </a>
-                                    </li>
+
                                     <li class="menu-item">
                                         <a href="{{route('allsubcategory')}}" class="menu-link">
                                             <div data-i18n="Sub Category List">Sub Category List</div>
@@ -136,14 +133,10 @@
                                             <div data-i18n="Order List">Order List</div>
                                         </a>
                                     </li>
-                                    <li class="menu-item">
-                                        <a href="app-ecommerce-order-details.html" class="menu-link">
-                                            <div data-i18n="Order Details">Order Details</div>
-                                        </a>
-                                    </li>
+
                                 </ul>
                             </li>
-                            <li class="menu-item">
+                            {{-- <li class="menu-item">
                                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                                     <div data-i18n="Customer">Customer</div>
                                 </a>
@@ -232,13 +225,13 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </li>
+                            </li> --}}
                         </ul>
                     </li>
                     <!-- e-commerce-app menu end -->
                     <!-- Academy menu start -->
 
-                    <li class="menu-item">
+                    {{-- <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ti ti-users"></i>
                             <div data-i18n="Users">Users</div>
@@ -544,7 +537,7 @@
                                 </a>
                             </li>
                         </ul>
-                    </li>
+                    </li> --}}
                 </ul>
             </aside>
             <!-- / Menu -->

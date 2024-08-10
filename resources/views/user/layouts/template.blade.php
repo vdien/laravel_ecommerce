@@ -14,7 +14,8 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Title  -->
     <title>Essence - Shoes Ecommerce</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css">
     <script src="{{ asset('home/js/jquery/jquery-2.2.4.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
     <!-- Favicon  -->
@@ -24,14 +25,17 @@
     <!-- Core Style CSS -->
     <link rel="stylesheet" href="{{ asset('home/css/core-style.css') }}">
     <link rel="stylesheet" href="{{ asset('home/style.css') }}">
-   <style>
-    .nice-select .list {
-    border-radius: 0px;
-    height: 200px;
-    overflow-y: auto;
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-}
-   </style>
+
+    <style>
+        .nice-select .list {
+            border-radius: 0px;
+            height: 200px;
+            overflow-y: auto;
+
+        }
+    </style>
 </head>
 
 <body>
@@ -63,12 +67,15 @@
                                         $categories = App\Models\Category::latest()->get();
                                     @endphp
                                     @foreach ($categories as $category)
-                                        <ul class="single-mega cn-col-4">
+                                        <ul class="single-mega cn-col-3">
                                             <li class="title"><a
                                                     href="{{ route('category', [$category->id, $category->slug]) }}">{{ $category->category_name }}</a>
                                             </li>
                                             @php
-                                                $subcategories = App\Models\Subcategory::where('category_id', $category->id)
+                                                $subcategories = App\Models\Subcategory::where(
+                                                    'category_id',
+                                                    $category->id,
+                                                )
                                                     ->latest()
                                                     ->get();
                                             @endphp
@@ -79,16 +86,13 @@
                                             @endforeach
                                         </ul>
                                     @endforeach
-
-                                    <div class="single-mega cn-col-4">
-                                        <img src="{{ asset('home/img/bg-img/bg-6.jpg') }}" alt="">
-                                    </div>
                                 </div>
                             </li>
-                            <li><a href="blog.html">Bài viết</a></li>
-                            <li><a href="contact.html">Liên hệ</a></li>
+                            <li><a href="{{route('blog')}}">Bài viết</a></li>
+                            <li><a href="{{route('contact')}}">Liên hệ</a></li>
                         </ul>
                     </div>
+
                     <!-- Nav End -->
                 </div>
             </nav>
@@ -98,13 +102,18 @@
                 <!-- Search Area -->
                 <div class="search-area">
                     <form action="#" method="post">
-                        <input type="search" name="search" id="headerSearch" placeholder="Tìm kiếm sản phẩm">
-                        <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                        <input type="search" name="search" id="headerSearch" placeholder="Tìm sản phẩm"  >
+                        <i class="fa fa-search mr-4" aria-hidden="true"></i>
                     </form>
+                    <!-- Search results container -->
+                    <div id="searchResults" style="display: none;">
+                        <!-- AJAX results will be appended here -->
+                    </div>
                 </div>
                 <!-- Favourite Area -->
                 <div class="favourite-area">
-                    <a href="{{ route('findorders') }}"><img style="max-width: 30px" src="{{ asset('home/img/core-img/shipping.svg') }}" alt=""></a>
+                    <a href="{{ route('profile.edit') }}"><img src="{{ asset('home/img/core-img/user.svg') }}"
+                            alt=""></a>
                 </div>
                 <!-- User Login Info -->
 
@@ -139,7 +148,6 @@
 
             <!-- Cart Summary -->
             <div class="cart-amount-summary">
-
                 <h2>Tóm tắt</h2>
                 <ul class="summary-table">
                     <li><span>Tổng tiền:</span> <span name="subtotal">0đ</span></li>
@@ -156,7 +164,14 @@
     <!-- ##### Right Side Cart End ##### -->
 
     <!-- ##### Welcome Area Start ##### -->
+
+    @yield('breadcumb')
     @yield('main-content')
+
+
+    <!-- ##### Breadcumb Area End ##### -->
+
+
     <!-- ##### Welcome Area End ##### -->
 
     <!-- ##### Footer Area Start ##### -->
@@ -168,51 +183,26 @@
                     <div class="single_widget_area d-flex mb-30">
                         <!-- Logo -->
                         <div class="footer-logo mr-50">
-                            <a href="#"><img src="{{ asset('home/img/core-img/logo2.png')}}" alt=""></a>
+                            <a href="#"><img src="{{ asset('home/img/core-img/logo2.png') }}" alt=""></a>
                         </div>
                         <!-- Footer Menu -->
                         <div class="footer_menu">
                             <ul>
-                                <li><a href="shop.html">Shop</a></li>
-                                <li><a href="blog.html">Blog</a></li>
-                                <li><a href="contact.html">Contact</a></li>
+                                <li><a href="{{route('shop')}}">Cửa hàng</a></li>
+                                <li><a href="{{route('blog')}}">Bài viết</a></li>
+                                <li><a href="{{route('contact')}}">Liên hệ</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                <!-- Single Widget Area -->
-                <div class="col-12 col-md-6">
-                    <div class="single_widget_area mb-30">
-                        <ul class="footer_widget_menu">
-                            <li><a href="#">Order Status</a></li>
-                            <li><a href="#">Payment Options</a></li>
-                            <li><a href="#">Shipping and Delivery</a></li>
-                            <li><a href="#">Guides</a></li>
-                            <li><a href="#">Privacy Policy</a></li>
-                            <li><a href="#">Terms of Use</a></li>
-                        </ul>
-                    </div>
-                </div>
+
             </div>
 
             <div class="row align-items-end">
                 <!-- Single Widget Area -->
-                <div class="col-12 col-md-6">
-                    <div class="single_widget_area">
-                        <div class="footer_heading mb-30">
-                            <h6>Subscribe</h6>
-                        </div>
-                        <div class="subscribtion_form">
-                            <form action="#" method="post">
-                                <input type="email" name="mail" class="mail" placeholder="Your email here">
-                                <button type="submit" class="submit"><i class="fa fa-long-arrow-right"
-                                        aria-hidden="true"></i></button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+
                 <!-- Single Widget Area -->
-                <div class="col-12 col-md-6">
+                <div class="col-6 col-md-6">
                     <div class="single_widget_area">
                         <div class="footer_social_area">
                             <a href="#" data-toggle="tooltip" data-placement="top" title=""
@@ -231,7 +221,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+
 
             <div class="row mt-5">
                 <div class="col-md-12 text-center">
@@ -240,19 +230,19 @@
                         Copyright ©
                         <script>
                             document.write(new Date().getFullYear());
-                        </script>2023 All rights reserved | Made with <i class="fa fa-heart-o"
-                            aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>,
-                        distributed by <a href="https://themewagon.com/" target="_blank">ThemeWagon</a>
+                        </script> All rights reserved | Made with <i class="fa fa-heart-o"
+                            aria-hidden="true"></i> by <a href="#" target="_blank">lnvdien</a>
                         <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     </p>
                 </div>
             </div>
-
+        </div>
         </div>
     </footer>
 
+    @yield('scripts')
 
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
 
 
     <!-- Popper js -->
@@ -271,16 +261,57 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('home/js/toast.js') }}"></script>
     <script>
+        $(document).ready(function() {
+    let debounceTimer;
+
+    $('#headerSearch').on('keyup', function() {
+        clearTimeout(debounceTimer);
+
+        const query = $(this).val();
+
+        // Nếu ô tìm kiếm trống, không thực hiện tìm kiếm
+        if (query.length > 0) {
+            debounceTimer = setTimeout(function() {
+                $.ajax({
+                    url: '{{ route('searchproduct') }}',
+                    method: 'POST',
+                    data: {
+                        search: query,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        $('#searchResults').html(response.html).show();
+                    },
+                    error: function(xhr) {
+                        console.error('An error occurred:', xhr.responseText);
+                    }
+                });
+            }, 300); // Thời gian debounce (300ms)
+        } else {
+            $('#searchResults').hide(); // Ẩn kết quả nếu ô tìm kiếm trống
+        }
+    });
+
+    // Ẩn kết quả khi nhấp ra ngoài
+    $(document).click(function(event) {
+        if (!$(event.target).closest('#searchForm, #searchResults').length) {
+            $('#searchResults').hide();
+        }
+    });
+});
+
+    </script>
+    <script>
         var cartGet = "{{ route('cart.get') }}";
-        var cartAdd = "{{route('cart.add')}}";
-        var cartUpdateQuantity = "{{route('cart.update_quantity')}}";
+        var cartAdd = "{{ route('cart.add') }}";
+        var cartUpdateQuantity = "{{ route('cart.update_quantity') }}";
         var cartRemove = "{{ route('cart.remove') }}";
         var cartCheckout = "{{ route('cart.checkout') }}";
         var cartThanks = "{{ route('cart.thanks') }}";
-
     </script>
-        <script src="{{ asset('home/js/cart.js') }}"></script>
-        <script src="{{ asset('home/js/checkout.js') }}"></script>
+    <script src="{{ asset('home/js/cart.js') }}"></script>
+    <script src="{{ asset('home/js/checkout.js') }}"></script>
+    <script src="{{ asset('home/js/shop.js') }}"></script>
 
 </body>
 

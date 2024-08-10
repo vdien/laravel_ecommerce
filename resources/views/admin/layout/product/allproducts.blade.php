@@ -11,10 +11,9 @@
     <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/quill/typography.css') }} " />
     <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/quill/katex.css') }} " />
     <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/quill/editor.css') }} " />
-    <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/flatpickr/flatpickr.css') }} "/>
-    <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/tagify/tagify.css') }} "/>
+    <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/flatpickr/flatpickr.css') }} " />
+    <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/tagify/tagify.css') }} " />
     <link rel="stylesheet" href="{{ asset('dashboard/vendor/libs/toastr/toastr.css') }}" />
-
 @endsection
 @section('page_script')
     <script src="{{ asset('dashboard/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }} "></script>
@@ -25,18 +24,16 @@
     <script src="{{ asset('dashboard/vendor/libs/quill/katex.js') }} "></script>
     <script src="{{ asset('dashboard/vendor/libs/toastr/toastr.js') }} "></script>
     <script src="{{ asset('dashboard/vendor/libs/quill/quill.js') }} "></script>
-    <script src="{{ asset('dashboard/vendor/libs/tagify/tagify.js')}}"></script>
+    <script src="{{ asset('dashboard/vendor/libs/tagify/tagify.js') }}"></script>
     <script src="{{ asset('dashboard/js/app-ecommerce-product-list.js') }}"></script>
     <script src="{{ asset('dashboard/js/app-ecommerce-product-edit.js') }}"></script>
     <script src="{{ asset('dashboard/js/app-ecommerce-product-add.js') }}"></script>
-
 @endsection
 
 @section('page_title')
     AllProduct-Lnvdien
 @endsection
 @section('content')
-
     <div class="container-xxl flex-grow-1 container-p-y">
         <h4 class="py-3 mb-4"><span class="text-muted fw-light">eCommerce /</span> Product List</h4>
         <!-- Product List Widget -->
@@ -143,8 +140,7 @@
                 </table>
             </div>
         </div>
-        <div class="modal-onboarding modal fade animate__animated" id="addProductModal" tabindex="-1"
-            aria-hidden="true">
+        <div class="modal-onboarding modal fade animate__animated" id="addProductModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header border-0">
@@ -153,7 +149,7 @@
                     </div>
 
                     <div class="modal-body onboarding-horizontal p-0">
-                          @include('admin.layout.product.addproduct')
+                        @include('admin.layout.product.addproduct')
                     </div>
                     <div class="modal-footer border-0">
                         <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">
@@ -165,46 +161,61 @@
             </div>
         </div>
     </div>
-    <div class="modal-onboarding modal fade animate__animated" id="editProductModal" tabindex="-1"
-            aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header border-0">
-                        <a class="text-muted close-label" href="javascript:void(0);" data-bs-dismiss="modal">Skip Intro</a>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body onboarding-horizontal p-0">
-                          @include('admin.layout.product.editproduct')
-                    </div>
-                    <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">
-                            Close
-                        </button>
-                        <button type="button" class="btn btn-primary" id="editProductSubmit">Submit</button>
-                    </div>
+    <div class="modal-onboarding modal fade animate__animated" id="editProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <a class="text-muted close-label" href="javascript:void(0);" data-bs-dismiss="modal">Skip Intro</a>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body onboarding-horizontal p-0">
+                    @include('admin.layout.product.editproduct')
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button" class="btn btn-primary" id="editProductSubmit">Submit</button>
                 </div>
             </div>
         </div>
     </div>
+    </div>
     <!-- Confirm Modal -->
-    <div class="modal fade" id="confirmEditProduct" tabindex="-1"
-    aria-labelledby="confirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmModalLabel">Confirm Action</h5>
+    <div class="modal fade" id="confirmEditProduct" tabindex="-1" aria-labelledby="confirmModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirm Action</h5>
 
-            </div>
-            <div class="modal-body">
-                Are you sure you want to save changes?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary"
-                    data-bs-dismiss="modal">No</button>
-                <button type="submit" class="btn btn-primary"
-                    id="confirmEditProductBtn">Yes</button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to save changes?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-primary" id="confirmEditProductBtn">Yes</button>
+                </div>
             </div>
         </div>
+
     </div>
-</div>
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this record?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-danger" id="confirmDelete">Yes, Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 @endsection

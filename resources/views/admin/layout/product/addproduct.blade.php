@@ -25,7 +25,7 @@
                                         </div>
                                         <div class="col">
                                             <label class="form-label" for="ecommerce-product-sku">SKU</label>
-                                            <input type="number" class="form-control" id="ecommerce-product-sku"
+                                            <input type="text" class="form-control" id="ecommerce-product-sku"
                                                 placeholder="SKU" name="productSku" aria-label="Product SKU" />
                                         </div>
                                     </div>
@@ -161,8 +161,8 @@
                                     <!-- Base Price -->
                                     <div class="mb-3">
                                         <label class="form-label" for="product_price">Base Price</label>
-                                        <input type="number" class="form-control" id="product_price"
-                                            placeholder="Price" name="product_price" aria-label="Product price" />
+                                        <input type="text" class="form-control" id="product_price"
+                   placeholder="Nhập giá sản phẩm" name="product_price" aria-label="Product price">
                                     </div>
                                     <!-- Discounted Price -->
                                     <div class="mb-3">

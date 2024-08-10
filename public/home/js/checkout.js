@@ -29,8 +29,7 @@ function renderCity(data) {
                 const result = data.filter(n => n.Name === $(this).val()); // Change from Id to Name
 
                 for (const district of result[0].Districts) {
-                    districts.append($("<option></option>").val(district.Name).text(district
-                    .Name)); // Use district.Name for both value and text
+                    districts.append($("<option></option>").val(district.Name).text(district.Name)); // Use district.Name for both value and text
                 }
 
                 // Refresh the Nice Select dropdown
@@ -41,14 +40,14 @@ function renderCity(data) {
         districts.change(function() {
             wards.find('option').not(':first').remove(); // Clear the wards dropdown
             const dataCity = data.filter(n => n.Name === citis.val());
-        
+
             if ($(this).val() !== "") {
                 const dataWards = dataCity[0].Districts.filter(n => n.Name === $(this).val())[0].Wards;
-        
+
                 for (const ward of dataWards) {
                     wards.append($("<option></option>").val(ward.Name).text(ward.Name));
                 }
-        
+
                 wards.niceSelect('update'); // Refresh the Nice Select dropdown
             }
         });
@@ -63,23 +62,19 @@ function renderCity(data) {
 $(document).on('click', '#checkout-btn', function(e) {
     e.preventDefault();
 
-    showConfirmationAlert('Are you sure you want to proceed with the checkout?', function(result) {
-        if (result.value) {
+    Swal.fire({
+        title: 'Xác nhận',
+        text: 'Bạn có chắc chắn muốn tiến hành đặt hàng không?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Có, tiến hành',
+        cancelButtonText: 'Hủy bỏ',
+    }).then(function(result) {
+        if (result.isConfirmed) {
             performCheckout();
         }
     });
 });
-
-function showConfirmationAlert(message, callback) {
-    Swal.fire({
-        title: 'Confirm',
-        text: message,
-        type: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, proceed',
-        cancelButtonText: 'Cancel',
-    }).then(callback);
-}
 
 function performCheckout() {
     var formData = {
@@ -101,17 +96,13 @@ function performCheckout() {
         },
         success: function(response) {
             if (response.success) {
-                // Show Toastr success notification
                 window.location.href = cartThanks;
-             
             } else {
-                // Show Toastr error notification
-                toastr.error('Checkout failed. Please try again later.');
+                toastr.error('Thanh toán thất bại. Vui lòng thử lại sau.');
             }
         },
         error: function() {
-            // Show Toastr error notification
-            toastr.error('An error occurred during checkout.');
+            toastr.error('Đã xảy ra lỗi trong quá trình thanh toán.');
         }
     });
 }

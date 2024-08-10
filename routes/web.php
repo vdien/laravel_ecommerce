@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SubCategoryController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
@@ -28,14 +29,19 @@ Route::controller(HomeController::class)->group(function () {
 });
 Route::controller(ClientController::class)->group(function () {
     Route::get('/shop', 'Shop')->name('shop');
-    Route::get('/shop/category/{id}/{slug}', 'CategoryPage')->name('category');
-    Route::get('/shop/subcategory/{id}/{slug}', 'SubCategoryPage')->name('subcategory');
+    Route::get('/shop', [ClientController::class, 'Shop'])->name('shop');
+    Route::get('/shop/category/{categoryId}', [HomeController::class, 'filterByCategory'])->name('category');
+    Route::get('/shop/subcategory/{subcategoryId}', [HomeController::class, 'filterBySubcategory'])->name('subcategory');
     Route::get('/single-product/{id}/{slug}', 'SingleProduct')->name('singleproduct');
     Route::get('/cartpage', 'Cart')->name('cartpage');
     Route::get('/user-profile', 'UserProfile')->name('userprofile');
     Route::get('/todays-deal;', 'TodaysDeal')->name('todaysdeal');
     Route::get('/customer-service', 'CustomerService')->name('customerservice');
-    Route::get('/checkout', 'Checkout')->name('checkout');
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout')->middleware('auth');
+    Route::get('/contact', 'Contact')->name('contact');
+    Route::get('/blog', 'Blog')->name('blog');
+    Route::post('/search-product', 'searchProduct')->name('searchproduct');
+    Route::get('/orders-by-status', [ClientController::class, 'getOrdersByStatus']);
 
 });
 Route::controller(CartController::class)->group(function () {
@@ -54,7 +60,7 @@ Route::controller(CartController::class)->group(function () {
 
 
 
-Route::middleware(['auth', ])->group(function () {
+Route::middleware(['auth',])->group(function () {
 
 });
 Route::get('/dashboard', function () {
@@ -67,7 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth','role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/admin/dashboard', 'Index')->name("admindashboard");
     });
@@ -94,8 +100,9 @@ Route::middleware(['auth','role:admin'])->group(function () {
         Route::get('/admin/delete-product/{id}', 'DeleteProduct')->name('deleteproduct');
     });
     Route::controller(OrderController::class)->group(function () {
-        Route::get('/admin/pending-orders', 'Index')->name("pendingorders");
+        Route::get('/admin/orders', 'Index')->name("allorders");
         Route::get('/admin/compelete-orders', 'CompeleteOrder')->name("completeOrder");
+        Route::post('/update-status', 'updateOrderStatus')->name("updateStatus");
         Route::get('/admin/cancel-orders', 'CancelOrder')->name("cancelOrder");
         Route::get('/admin/order/{id}', 'orderDetail')->name("orderdetail");
         Route::post('/update-order-status', 'updateStatus')->name('update.order.status');

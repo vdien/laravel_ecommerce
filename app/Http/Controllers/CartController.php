@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Subcategory;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +23,7 @@ class CartController extends Controller
     {
         $productId = $request->product_id; // You should validate and sanitize the input data
         $product = Product::findOrFail($productId);
+        $subcategory = Subcategory::findOrFail($product->product_subcategory_id);
         $cart = Session::get('cart', []);
         if (!$product) {
             // Handle the case where the product is not found
@@ -41,7 +44,7 @@ class CartController extends Controller
             $cart[$existingCartItemKey]['quantity'] += $request->quantity;
         } else {
             $cartItem = [
-                'product_subcategory' => $product->product_subcategory_name,
+                'product_subcategory' => $subcategory->subcategory_name,
                 'product_id' => $product->id,
                 'product_img' => $product->product_img,
                 'name' => $product->product_name,
@@ -119,9 +122,6 @@ class CartController extends Controller
     ]);
 }
 
-
-
-
     public function getCartItems()
     {
         $cartItems = Session::get('cart', []);
@@ -179,16 +179,24 @@ class CartController extends Controller
         $cartItemsData = Session::get('cart', []);
         $subtotal = 0;
 
+        $shippingActivity[] = [
+            'event' => "Chờ xử lý",
+            'timestamp' => Carbon::now()->toDateTimeString()
+        ];
         foreach ($cartItemsData as $cartItem) {
             $subtotal += $cartItem['quantity'] * $cartItem['price'];
         }
         $order = new Order([
+            'user_id' =>  auth()->user()->id,
             'name' => $request->input('name'),
             'phone' => $request->input('phone'),
+            'shipping_activity'=> json_encode($shippingActivity),
+            'payment_method'=>"COD",
+            'payment_status'=>2,
             'address' => $request->input('address') . " " . $request->input('ward') . " " . $request->input('district') . " " . $request->input('city'),
             'cart_items' => $cartItemsData,
             'subtotal' => $subtotal,
-            'status' => "Chờ xác nhận"
+            'status' => 1
         ]);
         $order->save();
           // Update product sizes' quantities

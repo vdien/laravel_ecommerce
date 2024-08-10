@@ -215,7 +215,7 @@ $(function () {
                             In_Stock:
                             '<span class="badge bg-label-primary'  +
                             '" text-capitalized>' +
-                            'Instock' +
+                            'In stock' +
                             '</span>',
                         };
                         return (
@@ -279,7 +279,7 @@ $(function () {
                     orderable: false,
                     render: function (data, type, full, meta) {
                         return (
-                            '<button class="btn btn-sm btn-icon delete-record-product me-2" data-product-id="' + full.id + '"><i class="ti ti-trash"></i></button>' +
+                            '<button class="btn btn-sm btn-icon delete-record-product me-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-product-id="' + full.id + '"><i class="ti ti-trash"></i></button>' +
                             '<button class="btn btn-sm btn-icon edit-record-product" data-bs-toggle="modal" data-bs-target="#editProductModal" data-product-id="' + full.id + '"><i class="ti ti-edit"></i></button>'
                         );
                     }
@@ -539,9 +539,9 @@ $(function () {
     $('#formAddProduct').submit(function (event) {
         event.preventDefault(); // Prevent default form submission
         // Set the value of the short description hidden input field
-        $('#short-description-input').val($('#short-description').html());
+        $('#short-description-input').val($('#short-description .ql-editor').html());
         // Set the value of the long description hidden input field
-        $('#long-description-input').val($('#long-description').html());
+        $('#long-description-input').val($('#long-description .ql-editor').html());
         var formData = new FormData(this);
 
         $.ajax({
@@ -571,6 +571,29 @@ $(function () {
     });
     $('body').on('click', '.edit-record-product', function () {
         // Get the product ID from the data attribute
+        const editShortDescription = document.querySelector('.edit-short-description');
+        let editShortQuill;
+        if (editShortDescription) {
+            editShortQuill = new Quill(editShortDescription, {
+                modules: {
+                    toolbar: '.edit-comment-short'
+                },
+                placeholder: 'Product Short Description',
+                theme: 'snow'
+            });
+        }
+
+        const editLongDescription = document.querySelector('.edit-long-description');
+        let editLongQuill;
+        if (editLongDescription) {
+            editLongQuill = new Quill(editLongDescription, {
+                modules: {
+                    toolbar: '.edit-comment-long'
+                },
+                placeholder: 'Product Long Description',
+                theme: 'snow'
+            });
+        }
         var $row = $(this).closest('tr');
         var rowData = dt_products.row($row).data();
 
@@ -591,38 +614,55 @@ $(function () {
         $('#edit_product_id').val(productId)
         $('#edit_product_name').val(productName)
         $('#edit-product-sku').val(productSku)
-        $('#edit-short-description').html(productShortDesc)
-        $('#edit-long-description').html(productLongDesc)
+
+        $('#edit-short-description .ql-editor').html(productShortDesc)
+        $('#edit-long-description .ql-editor').html(productLongDesc)
         $('#edit_product_price').val(productPrice)
         $('#edit_product_discount_price').val(discountPrice)
-        $('#edit-short-description-input').val($('#edit-short-description').html());
-        // Set the value of the long description hidden input field
-        $('#edit-long-description-input').val($('#edit-long-description').html());
+
         $('')
         if (productImage) {
-            $('#editImagePreview').html('<img src="' +
-                assetsPath +
-                'img/ecommerce-product-images/product/' + productImage + '" class="img-fluid" alt="Image Preview">');
+            // Tạo các phần tử HTML bằng jQuery
+            const col = $('<div>').addClass('col-4'); // Điều chỉnh kích thước cột theo nhu cầu
+            const img = $('<img>').attr('src', assetsPath + 'img/ecommerce-product-images/product/' + productImage)
+                                   .addClass('img-fluid') // Thêm các lớp CSS nếu cần
+                                   .attr('alt', 'Image Preview'); // Thêm thuộc tính alt
+
+            col.append(img);
+            $('#editImagePreview').html(col); // Thay thế nội dung của #editImagePreview bằng phần tử mới
         } else {
-            $('#editImagePreview').empty();
+            $('#editImagePreview').empty(); // Xóa nội dung của #editImagePreview nếu không có hình ảnh
         }
         if (productChildImage) {
-            // Parse the JSON string to convert it into an array
+            // Phân tích chuỗi JSON để chuyển đổi thành mảng
             var imageArray = JSON.parse(productChildImage);
-            // Check if it's an array
+            // Kiểm tra xem nó có phải là mảng không
             if ($.isArray(imageArray)) {
-                // Iterate over the array
-                $.each(imageArray, function (index, image) {
-                    $('#editImagePreviewRowChild').append('<img src="' + assetsPath + 'img/ecommerce-product-images/child-product/' + image + '" class="img-fluid pt-5" alt="Image Preview">');
+                // Xóa nội dung trước đó của #editImagePreviewRowChild
+                $('#editImagePreviewRowChild').empty();
+
+                // Duyệt qua mảng và tạo các phần tử hình ảnh
+                $.each(imageArray, function(index, image) {
+                    // Tạo phần tử div và img
+                    const col = $('<div>').addClass('col-4'); // Điều chỉnh kích thước cột theo nhu cầu
+                    const img = $('<img>').attr('src', assetsPath + 'img/ecommerce-product-images/child-product/' + image)
+                                           .addClass('img-fluid mb-2') // Thêm các lớp CSS nếu cần
+                                           .attr('alt', 'Image Preview'); // Thêm thuộc tính alt
+
+                    // Thêm img vào col và col vào #editImagePreviewRowChild
+                    col.append(img);
+                    $('#editImagePreviewRowChild').append(col);
                 });
             } else {
-                // Handle the case when productChildImage is not an array
+                // Xử lý trường hợp khi productChildImage không phải là mảng
                 console.error("productChildImage is not an array.");
             }
         } else {
-            // Handle the case when productChildImage is empty or null
+            // Xử lý trường hợp khi productChildImage trống hoặc null
             $('#editImagePreviewRowChild').empty();
         }
+        $('#edit-size-quantity').empty();
+
         const container = document.getElementById('edit-size-quantity');
         sizes.forEach(size => {
             const newRow = document.createElement('div');
@@ -663,12 +703,15 @@ $(function () {
         // Set the concatenated tag values to the input field
         $("#edit_product_tags").val(concatenatedTags);
     })
-    $('#editProductSubmit').on('click', function (event) {
-        event.preventDefault(); // Prevent default form submission
+    $('#editProductSubmit').on('click', function () {
+        $('#edit-short-description-input').val($('#edit-short-description .ql-editor').html());
+        // Set the value of the long description hidden input field
+        $('#edit-long-description-input').val($('#edit-long-description .ql-editor').html());
         $('#confirmEditProduct').modal('show'); // Show the confirmation modal
     });
 
-    $('#confirmEditProductBtn').on('click',function(){
+    $('#confirmEditProductBtn').on('click',function(event){
+        event.preventDefault(); // Prevent default form submission
         $('#formEditProduct').submit();
     })
     $('#formEditProduct').on('submit',function(event){
@@ -685,7 +728,12 @@ $(function () {
                 dt_products.clear().rows.add(response).draw();
                 $('#editProductModal').modal('hide');
                 $('#confirmEditProduct').modal('hide');
-                toastr.success('Subcategory updated successfully.');
+                toastr.success('Product updated successfully.');
+                //reset form edit
+                $('#editImagePreview').empty();
+                $('#editImagePreviewRowChild').empty();
+                $('#edit-size-quantity').empty()
+                $('#formEditProduct')[0].reset();
             },
             error: function (xhr, status, error) {
                 toastr.error(error);
@@ -696,9 +744,39 @@ $(function () {
 
     // Delete Record
     $('body').on('click', '.delete-record-product', function () {
-        dt_products.row($(this).parents('tr')).remove().draw();
+        var $row = $(this).closest('tr');
+            var rowData = dt_products.row($row).data();
+            var productId = rowData.id;
+    //         $('.modal').modal('hide');
+    //         // Show the confirmation modal for delete
+            $('#confirmDeleteModal').modal('show');
+    //         // Set data-attribute on confirmation button to hold the category ID
+            $('#confirmDelete').data('product-id', productId);
     })
+    $('#confirmDelete').on('click', function () {
 
+        var productId = $(this).data('product-id');
+        // Perform the delete action (e.g., send AJAX request to delete the record)
+        // Replace this with your actual delete logic
+        let deleteCategoryUrl = route('deleteproduct', { id: productId });
+        $.ajax({
+            url: deleteCategoryUrl,
+            method: 'GET',
+            data: { productId: productId },
+            success: function (response) {
+                var rowIndex = dt_products.rows().eq(0).filter(function(index) {
+                    return dt_products.row(index).data().id === productId;
+                });
+                // Handle success (e.g., remove the row from the DataTable)
+                dt_products.row(rowIndex).remove().draw();
+                $('#confirmDeleteModal').modal('hide');
+                toastr.success('Category deleted successfully.');
+            },
+            error: function (xhr, status, error) {
+                toastr.error(error);
+            }
+        });
+    });
 
     // Filter form control to default size
     // ? setTimeout used for multilingual table initialization

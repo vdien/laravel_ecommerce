@@ -4,12 +4,10 @@
                     <h4 class="py-3 mb-0">
                         <span class="text-muted fw-light">eCommerce /</span><span class="fw-medium"> Edit Product</span>
                     </h4>
-
                     <div class="app-ecommerce">
                         <!-- Edit Product -->
-                        <form id="formEditProduct" enctype="multipart/form-data">
+                        <form id="formEditProduct" enctype="multipart/form-data" novalidate>
                             @csrf
-                            <input type="hidden" name="edit_product_id" name="edit_product_id">
                             <div class="row">
                                 <!-- First column-->
                                 <div class="col-12 col-lg-8">
@@ -29,7 +27,7 @@
                                                 </div>
                                                 <div class="col">
                                                     <label class="form-label" for="edit-product-sku">SKU</label>
-                                                    <input type="number" class="form-control"
+                                                    <input type="text" class="form-control"
                                                         id="edit-product-sku" placeholder="SKU" name="edit_productSku"
                                                         aria-label="Product SKU" />
                                                 </div>
@@ -53,7 +51,6 @@
                                                     </div>
                                                     <div class="edit-short-description border-0 pb-4"
                                                         id="edit-short-description">
-
                                                     </div>
                                                     <input type="hidden" name="edit-short-description-input"
                                                         id="edit-short-description-input">

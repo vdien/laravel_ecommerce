@@ -1,4 +1,4 @@
-@extends('user.layouts.templateshop')
+@extends('user.layouts.template')
 @section('breadcumb')
     <!-- ##### Breadcumb Area Start ##### -->
 

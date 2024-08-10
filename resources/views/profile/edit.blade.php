@@ -19,68 +19,121 @@
                 <div class="col-lg-8">
                     <div class="card mb-4">
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <p class="mb-0">Full Name</p>
-                                </div>
-                                <div class="col-sm-9">
-                                    <p class="text-muted mb-0">Johnatan Smith</p>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <p class="mb-0">Email</p>
-                                </div>
-                                <div class="col-sm-9">
-                                    <p class="text-muted mb-0">example@example.com</p>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <p class="mb-0">Phone</p>
-                                </div>
-                                <div class="col-sm-9">
-                                    <p class="text-muted mb-0">(097) 234-5678</p>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <p class="mb-0">Mobile</p>
-                                </div>
-                                <div class="col-sm-9">
-                                    <p class="text-muted mb-0">(098) 765-4321</p>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <p class="mb-0">Address</p>
-                                </div>
-                                <div class="col-sm-9">
-                                    <p class="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                            <h3 class="mb-4">Lịch sử mua hàng</h3>
+                            <!-- Bộ lọc trạng thái -->
+                            <div class="mb-4">
+                                <div class="d-flex flex-wrap">
+                                    <button type="button" class="btn btn-outline-primary btn-sm mr-2 mb-2"
+                                        data-status="all">Tất cả</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mr-2 mb-2"
+                                        data-status="1">Chờ xử lý</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mr-2 mb-2"
+                                        data-status="2">Đã xác nhận</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mr-2 mb-2"
+                                        data-status="3">Đang vận chuyển</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mr-2 mb-2"
+                                        data-status="6">Đã hủy</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mr-2 mb-2"
+                                        data-status="4">Thành công</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mb-2" data-status="5">Trả
+                                        hàng</button>
                                 </div>
                             </div>
                         </div>
+
                     </div>
-                    
+                    <!-- Danh sách đơn hàng -->
+
+
+                    <div id="orderList">
+                    </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="btn btn-danger btn-sm float-right">
-
+                        <button type="submit" class="btn btn-danger btn-sm float-right mt-2">
                             {{ __('Log Out') }}
                         </button>
                     </form>
+                    <!-- Các đơn hàng sẽ được chèn vào đây bằng AJAX -->
+
+
+                    <!-- Thêm các đơn hàng khác ở đây -->
                 </div>
 
             </div>
+
+        </div>
         </div>
     </section>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Profile') }}
+
         </h2>
     </x-slot>
+@endsection
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+            const statusObj = {
+                1: {
+                    title: 'Chờ xử lý',
+                    class: 'badge-warning'
+                },
+                2: {
+                    title: 'Đã xác nhận',
+                    class: 'badge-primary'
+                },
+                3: {
+                    title: 'Đang giao hàng',
+                    class: 'badge-info'
+                },
+                4: {
+                    title: 'Thành công',
+                    class: 'badge-success'
+                },
+                5: {
+                    title: 'Trả hàng',
+                    class: 'badge-danger'
+                },
+                6: {
+                    title: 'Đã hủy',
+                    class: 'badge-secondary'
+                }
+            };
+
+            function loadOrders(status) {
+                $.ajax({
+                    url: '/orders-by-status',
+                    type: 'GET',
+                    data: {
+                        status: status
+                    },
+                    success: function(response) {
+                        $('#orderList').html(response.html);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching orders:', error);
+                    }
+                });
+            }
+
+            // Gọi loadOrders với 'all' để lấy tất cả đơn hàng khi trang được tải
+            loadOrders('all');
+
+            // Xử lý sự kiện nhấp chuột trên các nút lọc
+
+
+            // Xử lý sự kiện nhấp chuột trên các nút lọc
+            $('.btn[data-status]').click(function() {
+
+                var selectedStatus = $(this).data('status');
+                loadOrders(selectedStatus);
+                // Cập nhật kiểu nút (đổi màu hoặc kiểu để hiện trạng thái hiện tại)
+                $('.btn[data-status]').removeClass('btn-outline-primary').addClass('btn-outline-secondary');
+                $(this).removeClass('btn-outline-secondary').addClass('btn-outline-primary');
+
+                loadOrders(selectedStatus);
+            });
+        });
+    </script>
 @endsection

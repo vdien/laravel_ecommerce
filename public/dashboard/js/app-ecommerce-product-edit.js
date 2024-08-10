@@ -8,29 +8,7 @@
 (function () {
 
     // Initialize Quill editors
-    const editShortDescription = document.querySelector('.edit-short-description');
-    let editShortQuill;
-    if (editShortDescription) {
-        editShortQuill = new Quill(editShortDescription, {
-            modules: {
-                toolbar: '.edit-comment-short'
-            },
-            placeholder: 'Product Short Description',
-            theme: 'snow'
-        });
-    }
 
-    const editLongDescription = document.querySelector('.edit-long-description');
-    let editLongQuill;
-    if (editLongDescription) {
-        editLongQuill = new Quill(editLongDescription, {
-            modules: {
-                toolbar: '.edit-comment-long'
-            },
-            placeholder: 'Product Long Description',
-            theme: 'snow'
-        });
-    }
 
     // previewTemplate: Updated Dropzone default previewTemplate
 

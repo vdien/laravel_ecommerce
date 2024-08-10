@@ -1,10 +1,10 @@
 <section>
     <header>
-        <h2>
-            {{ __('Profile Information') }}
-        </h2>
+        <h3>
+            {{ __('Thông tin cá nhân') }}
+        </h3>
         <p>
-            {{ __("Update your account's profile information and email address.") }}
+            {{ __("Cập nhật thông tin hồ sơ tài khoản và địa chỉ email.") }}
         </p>
     </header>
 
@@ -17,7 +17,7 @@
         @method('patch')
         <div>
             <div class="form-group">
-                <x-input-label for="name" :value="__('Name')" />
+                <x-input-label for="name" :value="__('Tên')" />
                 <x-text-input id="name" name="name" type="text" class="form-control form-control-sm "
                     :value="old('name', $user->name)" required autofocus autocomplete="name" />
                 <x-input-error class="mt-2" :messages="$errors->get('name')" />
@@ -51,11 +51,11 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-primary-button class="btn btn-primary btn-sm">{{ __('Save') }}</x-primary-button>
+            <x-primary-button class="btn btn-primary btn-sm">{{ __('Lưu lại') }}</x-primary-button>
 
             @if (session('status') === 'profile-updated')
                 <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600">{{ __('Saved.') }}</p>
+                    class="text-sm text-gray-600">{{ __('Lưu lại.') }}</p>
             @endif
         </div>
     </form>

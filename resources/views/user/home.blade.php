@@ -1,22 +1,25 @@
-@extends('user.layouts.templateshop')
+@extends('user.layouts.template')
 @section('main-content')
     <!-- ##### Welcome Area Start ##### -->
     <section class="welcome_area bg-img background-overlay"
-        style="background-image: url({{ asset('home/img/bg-img/ec1459d90b2d10d904cdd09981cac08c.jpg') }});">
-        {{-- <div class="container h-100">
-            <div class="row h-100 align-items-center">
-                <div class="col-12">
-                    <div class="hero-content">
-                        <h6>Hello</h6>
-                        <h2>New Collection</h2>
-                        <a href="#" class="btn essence-btn">view collection</a>
-                    </div>
+    style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url({{ asset('home/img/bg-img/SNEAKER_GUIDE_OPENER.jpg') }});">
+    <div class="container h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col-12">
+                <div class="hero-content text-center">
+                    <h5 style="color: white;">Chào mừng đến với cửa hàng của chúng tôi</h5>
+                    <h2 style="color: white; font-weight: bold;">Khám phá sản phẩm mới nhất</h2>
+                    <p style="color: white; margin-bottom: 30px;">Khám phá sản phẩm của chúng tôi và tìm phong cách hoàn hảo cho bạn.</p>
+                    <a href="#" class="btn essence-btn">Mua Ngay</a>
                 </div>
             </div>
-        </div> --}}
-    </section>
-    {{-- <!-- ##### Top Catagory Area Start ##### -->
-    <div class="top_catagory_area section-padding-80 clearfix">
+        </div>
+    </div>
+</section>
+
+
+    {{-- {{-- <!-- ##### Top Catagory Area Start ##### --> --}}
+    {{-- <div class="top_catagory_area section-padding-80 clearfix">
         <div class="container">
             <div class="row justify-content-center">
                 <!-- Single Catagory -->
@@ -48,11 +51,11 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     <!-- ##### Top Catagory Area End ##### -->
 
     <!-- ##### CTA Area Start ##### -->
-    <div class="cta-area">
+    {{-- <div class="cta-area">
         <div class="container">
             <div class="row">
                 <div class="col-12">
@@ -69,9 +72,8 @@
                 </div>
             </div>
         </div>
-    </div>
-    <!-- ##### CTA Area End ##### --> --}}
-
+    </div> --}}
+    <!-- ##### CTA Area End ##### -->
     <!-- ##### New Arrivals Area Start ##### -->
     <section class="new_arrivals_area section-padding-80 clearfix">
         <div class="container">
@@ -95,8 +97,8 @@
                                 <a href="{{ route('singleproduct', [$product->id, $product->slug]) }}">
                                     <div class="product-img">
 
-                                        <img src="{{ asset($product->product_img) }}" alt="">
-                                        <img class="hover-img" src="{{ asset($product->product_img) }}" alt="">
+                                        <img src="{{  asset('/dashboard/img/ecommerce-product-images/product/' . $product->product_img) }}" alt="">
+                                        <img class="hover-img" src="{{ asset('/dashboard/img/ecommerce-product-images/product/' . $product->product_img) }}" alt="">
 
                                         <!-- Hover Thumb -->
                                         <!-- Favourite -->
@@ -122,7 +124,7 @@
     <!-- ##### New Arrivals Area End ##### -->
 
     <!-- ##### Brands Area Start ##### -->
-    <div class="brands-area d-flex align-items-center justify-content-between">
+    {{-- <div class="brands-area d-flex align-items-center justify-content-between">
         <!-- Brand Logo -->
         <div class="single-brands-logo">
             <img src="{{ asset('home/img/core-img/brand1.png') }}" alt="">
@@ -147,6 +149,6 @@
         <div class="single-brands-logo">
             <img src="{{ asset('home/img/core-img/brand6.png') }}" alt="">
         </div>
-    </div>
+    </div> --}}
     <!-- ##### Brands Area End ##### -->
 @endsection

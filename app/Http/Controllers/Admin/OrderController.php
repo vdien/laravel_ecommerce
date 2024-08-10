@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -12,12 +13,27 @@ class OrderController extends Controller
     //
     public function Index()
     {
-        $orders = Order::latest()->where('status', '!=', 'Hủy')->where('status', '!=', 'Thành công')->get();
-        return view('admin.layout.orders.pendingorders', compact('orders'));
+        // Lấy tất cả các đơn hàng và kèm theo thông tin user
+        $orders = Order::latest()->with('user')->get();
+
+        // Đếm số lượng order của mỗi user
+        $userOrderCounts = Order::select('user_id')
+            ->selectRaw('count(*) as order_count')
+            ->groupBy('user_id')
+            ->pluck('order_count', 'user_id');
+
+        // Thêm số lượng order vào mỗi order
+        $ordersWithCount = $orders->map(function ($order) use ($userOrderCounts) {
+            $order->user_order_count = $userOrderCounts[$order->user_id] ?? 0;
+            return $order;
+        });
+
+        return response()->json(['data' => $ordersWithCount]);
     }
     public function CompeleteOrder()
     {
-        $orders = Order::latest()->where('status', 'Thành công')->get();
+
+        $orders = Order::latest()->get();
         return view('admin.layout.orders.pendingorders', compact('orders'));
     }
     public function CancelOrder()
@@ -32,43 +48,56 @@ class OrderController extends Controller
 
         return view('admin.layout.orders.orderdetail', compact('order', 'cart_items'));
     }
-    public function updateStatus(Request $request)
-    {
-        // Validate the request data (you can add more validation rules as needed)
-        $request->validate([
-            'order_id' => 'required|exists:orders,id',
-            'status' => 'required|in:Đã đóng gói,Đang vận chuyển,Thành công,Hủy,Chờ xác nhận',
-        ]);
+    public function updateOrderStatus(Request $request){
 
-        // Update the order status
-        $order = Order::find($request->input('order_id'));
-        $oldStatus = $order->status;
-        $newStatus = $request->input('status');
+        // Mảng ánh xạ status đến title và class
+        $statusObj = [
+            1 => ['title' => 'Chờ xử lý', 'class' => 'bg-label-warning'],
+            2 => ['title' => 'Đã xác nhận', 'class' => 'bg-label-primary'],
+            3 => ['title' => 'Đang giao hàng', 'class' => 'bg-label-info'],
+            4 => ['title' => 'Thành Công', 'class' => 'bg-label-success'],
+            5 => ['title' => 'Trả hàng', 'class' => 'bg-label-danger'],
+            6 => ['title' => 'Đã hủy', 'class' => 'bg-label-secondary']
 
-        // If the status is changing to "cancel" from a previous status
-        if ($newStatus === 'Hủy' && $oldStatus !== 'Hủy') {
-            // Get cart items from the order
-            $cartItems = $order->cart_items;
+        ];
 
-            foreach ($cartItems as $cartItem) {
-                $product = Product::findOrFail($cartItem['product_id']);
-                $productSize = $product->sizes()->where('size', $cartItem['size'])->first();
-
-                if ($productSize) {
-                    // Increase the quantity for the respective size
-                    $updatedQuantity = $productSize->quantity + $cartItem['quantity'];
-                    $productSize->update(['quantity' => $updatedQuantity]);
-                }
-            }
+        $order = Order::find($request->order_id);
+        if ($request->status == 4) {
+            $order->payment_status = 1; // Cập nhật trạng thái thanh toán
         }
 
-        // Update the order status
-        $order->status = $newStatus;
+        if (($request->status == 5 || $request->status == 6) && $order->payment_method == "COD") {
+            $order->payment_status = 4; // Cập nhật trạng thái thanh toán
+        }
+        $order->status = $request->status;
+        $order->shipping_brand = $request->shipping_brand;
+        $order->tracking_number = $request->tracking_number;
         $order->save();
 
-        // Return a response (you can customize this as needed)
-        return response()->json(['message' => 'Order status updated successfully']);
+        // Cập nhật log hoạt động vận chuyển
+        $shippingActivity = json_decode($order->shipping_activity, true);
+        $shippingActivity[] = [
+            'event' => $statusObj[$request->status]['title'],
+            'timestamp' => Carbon::now()->toDateTimeString()
+        ];
+
+        $order->shipping_activity = json_encode($shippingActivity);
+        $order->save();
+
+        $orders = Order::latest()->with('user')->get();
+
+        // Đếm số lượng order của mỗi user
+        $userOrderCounts = Order::select('user_id')
+            ->selectRaw('count(*) as order_count')
+            ->groupBy('user_id')
+            ->pluck('order_count', 'user_id');
+
+        // Thêm số lượng order vào mỗi order
+        $ordersWithCount = $orders->map(function ($order) use ($userOrderCounts) {
+            $order->user_order_count = $userOrderCounts[$order->user_id] ?? 0;
+            return $order;
+        });
+
+        return response()->json(['data' => $ordersWithCount]);
     }
-
-
 }

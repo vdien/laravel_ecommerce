@@ -85,8 +85,8 @@
                         <h5>PHƯƠNG THỨC THANH TOÁN</h5>
                     </div>
                     <div class="form-check mb-4">
-                        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
-                        <label class="form-check-label" for="exampleRadios1">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="paymentMethod" value="COD" checked>
+                        <label class="form-check-label" for="paymentMethod">
                           Thanh toán khi nhận hàng
                         </label>
                       </div>

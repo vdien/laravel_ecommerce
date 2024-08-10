@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -52,7 +53,7 @@ class ProductController extends Controller
             // Generate a unique filename for each image
             $img_name = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
             // Move each image to the public 'upload' directory
-            $image->move(public_path('dashboard/img/ecommerce-product-images/child-product'), $img_name);
+            $image->move(public_path('dashboard/img/ecommerce-product-images/child-product/'), $img_name);
             // Construct the URL of each uploaded image
             // Store each image URL in the array
             $imageChildUrls[] = $img_name;
@@ -101,8 +102,9 @@ class ProductController extends Controller
         $imageChildUrls = [];
 
         $product = Product::findOrFail($request->edit_product_id);
+
         if ($request->hasFile('edit_product_images')) {
-            $oldImagePath = public_path('dashboard/img/ecommerce-product-images/product' . $product->product_image);
+            $oldImagePath = public_path('dashboard/img/ecommerce-product-images/product/' . $product->product_img);
             if (File::exists($oldImagePath)) {
                 File::delete($oldImagePath);
             }
@@ -111,7 +113,7 @@ class ProductController extends Controller
                 // Generate a unique filename for each image
                 $img_name = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
                 // Move each image to the public 'upload' directory
-                $image->move(public_path('dashboard/img/ecommerce-product-images/product'), $img_name);
+                $image->move(public_path('dashboard/img/ecommerce-product-images/product/'), $img_name);
                 // Construct the URL of each uploaded image
                 // Store each image URL in the array
                 $imageUrls = $img_name;
@@ -120,24 +122,29 @@ class ProductController extends Controller
 
         }
         if ($request->hasFile('edit_product_images_child')) {
-            foreach ($product->product_img_child as $child_images) {
-                $oldImagePath = public_path('dashboard/img/ecommerce-product-images/child-product' . $child_images);
-                if (File::exists($oldImagePath)) {
-                    File::delete($oldImagePath);
+            // Delete old images
+                foreach (json_decode($product->product_img_child) as $child_image) {
+                    $oldChildImagePath = public_path('dashboard/img/ecommerce-product-images/child-product/' .$child_image);
+                    if (File::exists($oldChildImagePath)) {
+                        File::delete($oldChildImagePath);
+                    }
                 }
-            }
+
             // Get the uploaded images
             $images_child = $request->file('edit_product_images_child');
+            $imageChildUrls = []; // Initialize the array to store image URLs
+
             // Update the product's image URLs in the database as a JSON array
             foreach ($images_child as $image) {
                 // Generate a unique filename for each image
                 $img_name = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
                 // Move each image to the public 'upload' directory
-                $image->move(public_path('dashboard/img/ecommerce-product-images/child-product'), $img_name);
-                // Construct the URL of each uploaded image
-                // Store each image URL in the arrayx
+                $image->move(public_path('dashboard/img/ecommerce-product-images/child-product/'), $img_name);
+                // Store each image URL in the array
                 $imageChildUrls[] = $img_name;
             }
+
+            // Save the JSON array of image URLs to the product
             $product->product_img_child = json_encode($imageChildUrls);
         }
 
@@ -166,17 +173,33 @@ class ProductController extends Controller
         }
         $product->save();
         $products = Product::with(['subcategory', 'sizes'])->get();
-        return $products;
+        return response()->json($products);
     }
-    public function DeleteProduct($id)
+    public function DeleteProduct(Request $request)
     {
-        $img = Product::where('id', $id)->value('product_img');
-        // unlink($img);
-        $category_id = Product::where('id', $id)->value('product_category_id');
-        $subcategory_id = Product::where('id', $id)->value('product_subcategory_id');
-        Product::findOrFail($id)->delete();
-        Category::where('id', $category_id)->decrement('product_count', 1);
-        Subcategory::where('id', $subcategory_id)->decrement('product_count', 1);
-        return redirect()->route('allproducts')->with('message', 'Product Deleted Successfully!');
+        {
+            $product_id = $request->input('productId');
+
+            $product = Product::find($product_id);
+
+            if (!$product) {
+                return response()->json(['success' => false, 'message' => 'Product not found'], 404);
+            }
+
+            // Delete category image from storage if it exists
+            if ($product->product_img) {
+                File::delete(public_path('dashboard/img/ecommerce-product-images/product' . $product->subcategory_image));
+            }
+
+                foreach (json_decode($product->product_img_child) as $child_image) {
+                    $oldImagePath = public_path('dashboard/img/ecommerce-product-images/child-product/' . $child_image);
+                    if (File::exists($oldImagePath)) {
+                        File::delete($oldImagePath);
+                    }
+                }
+            $product->delete();
+            return response()->json(['success' => true, 'message' => 'Product deleted successfully']);
+        }
+
     }
 }

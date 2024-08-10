@@ -1,115 +1,145 @@
-@extends('admin.layout.template')
-@section('page_title')
-    Order-detail
-@endsection
-@section('content')
-    <div class="container">
-        <div class="card">
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="py-3 mb-2"><span class="text-muted fw-light">eCommerce /</span> Order Details</h4>
 
-            <div class="card-body">
-                <h6 class="card-title">Mã đơn hàng: 17</h6>
-                <p class="card-text float-right">Ngày đặt: 8/9/2023 23:15:49</p>
-
-                <h6 class="card-subtitle mb-2 text-muted">Thông tin sản phẩm:</h6>
-                <div class="col-12 row">
-                    <div class="col-6">
-                        <ul>
-                            @foreach ($order->cart_items as $cart_item)
-                                <div class="p-2">
-                                    <div class="col-12">
-                                        <img src="{{ asset($cart_item['product_img']) }}" alt="" width="70"
-                                            class="img-fluid rounded shadow-sm">
-
-                                        <div class="ml-3 d-inline-block align-middle col-6 ">
-                                            <h6 class="mb-0"> <a href="#"
-                                                    class="text-dark d-inline-block">{{ $cart_item['name'] }}</a></h6>
-                                            <span class="text-muted font-weight-normal font-italic">Size:
-                                                {{ $cart_item['size'] }}</span>
-                                        </div>
-                                        <span
-                                            class="text-muted font-weight-normal font-italic ml-1">x{{ $cart_item['quantity'] }}</span>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </ul>
-                    </div>
-                    <div class="col-6">
-                        <ul class="order-details-form mb-4">
-                            <input type="hidden" id="order_id" value="{{ $order->id }}">
-                            <li>Họ và tên: {{ $order->name }} </li>
-                            <li>Số điện thoại:{{ $order->phone }} c</li>
-                            <li>Địa chỉ: {{ $order->address }}</li>
-                            <li>Tổng tiền thanh toán: {{ $order->subtotal }}</li>
-                            <div class="pt-4 pb-4">
-                                Tình trạng đơn hàng:
-                                <select class="form-select" id="orderStatus" name="orderStatus">
-                                    @if ($order->status === 'Chờ xác nhận')
-                                        <option value ="Chờ xác nhận" selected>Chờ xác nhận</option>
-                                        <option value="Đã đóng gói">Đã Đóng gói</option>
-                                        <option value="Đang vận chuyển">Đang vận chuyển</option>
-                                        <option value="Thành công">Thành công</option>
-                                        <option value="Trả hàng">Trả hàng</option>
-                                        <option value="Hủy">Hủy</option>
-
-                                    @endif
-                                    @if ($order->status === 'Đã đóng gói')
-                                        <option value="Đã đóng gói" selected>Đã Đóng gói</option>
-                                        <option value="Đang vận chuyển">Đang vận chuyển</option>
-                                        <option value="Thành công">Thành công</option>
-                                        <option value="Trả hàng">Trả hàng</option>
-                                    @endif
-                                    @if ($order->status === 'Đang vận chuyển')
-                                        <option value="Đang vận chuyển" selected>Đang vận chuyển</option>
-                                        <option value="Thành công">Thành công</option>
-                                        <option value="Trả hàng">Trả hàng</option>
-                                    @endif
-                                    @if ($order->status === 'Thành công')
-                                        <option selected>Thành công</option>
-
-                                    @endif
-
-                                    @if ($order->status === 'Hủy')
-                                        <option selected>Hủy</option>
-
-                                    @endif
-                                </select>
-                            </div>
-
-                            <button type="button" class="btn btn-primary " data-bs-toggle="modal"
-                                data-bs-target="#modalToggle">
-                                Cập nhật trạng thái
-                            </button>
-                            <!-- Modal 1-->
-                            <div class="modal fade" id="modalToggle" aria-labelledby="modalToggleLabel" tabindex="-1"
-                                style="display: none" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalToggleLabel">Xác nhận</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">Xác nhận thay đổi trạng thái đơn hàng
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button class="btn btn-primary" id="updateStatusButton">
-                                                Đồng ý
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Modal 2-->
-
-                    </div>
-                </div>
-                </ul>
-            </div>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
+        <div class="d-flex flex-column justify-content-center gap-2 gap-sm-0">
+            <h5 class="mb-1 mt-3 d-flex flex-wrap gap-2 align-items-end">
+                Order <span id="order_detail_id"></span> <span id="detail_payment_status"> </span>
+                <span id="detail_status"></span>
+            </h5>
+            <p class="text-body" id="detail_order_time"></p>
         </div>
     </div>
+
+    <!-- Order Details Table -->
+
+    <div class="row">
+        <div class="col-12 col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title m-0">Order details</h5>
+                </div>
+                <input type="hidden" id="orderId">
+                <div class="card-datatable table-responsive">
+                    <table class="datatables-order-details table border-top" id="products_order">
+                        <thead>
+                            <tr>
+                                <th class="w-50">products</th>
+                                <th class="w-25">price</th>
+                                <th class="w-25">qty</th>
+                                <th>total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                    <div class="d-flex justify-content-end align-items-center m-3 mb-2 p-1">
+                        <div class="order-calculations">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="w-px-100 text-heading">Subtotal:</span>
+                                <h6 class="mb-0" id="orderSubtotal"></h6>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="w-px-100 text-heading">Discount:</span>
+                                <h6 class="mb-0">$0</h6>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <h6 class="w-px-100 mb-0">Total:</h6>
+                                <h6 class="mb-0" id="totalOrder"></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-4">
+
+
+
+                <div class="card-body">
+                    <ul class="timeline pb-0 mb-0" id="shippingTimeline">
+                        <!-- Timeline items will be injected here by jQuery -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="card-title m-0">Customer details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-start align-items-center mb-4">
+                        <div class="avatar me-2">
+                            <img src="{{ asset('dashboard/assets/img/avatars/1.png') }}" alt="Avatar"
+                                class="rounded-circle" />
+                        </div>
+                        <div class="d-flex flex-column">
+                            <a href="app-user-view-account.html" class="text-body text-nowrap">
+                                <h6 class="mb-0" id="userName">Shamus Tuttle</h6>
+                            </a>
+                            <small class="text-muted">Customer ID: #<span id="userId"></span></small>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-start align-items-center mb-4">
+                        <span
+                            class="avatar rounded-circle bg-label-success me-2 d-flex align-items-center justify-content-center"><i
+                                class="ti ti-shopping-cart ti-sm"></i></span>
+                        <h6 class="text-body text-nowrap mb-0" id="totalUserOrder"></h6>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <h6>Contact info</h6>
+
+                    </div>
+                    <p class="mb-1">Email: <span id="userEmail"></span></p>
+                    <p class="mb-0">Mobile: <span id="userPhone"></span></p>
+                </div>
+            </div>
+
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between">
+                    <h6 class="card-title m-0">Địa chỉ thanh toán</h6>
+
+                </div>
+                <div class="card-body">
+                    <p class="mb-4" id="orderAddress"></p>
+                    <h6 class="mb-0 pb-2">Phương thức thanh toán: <span id="paymentMethod"></span></h6>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="card-title m-0 mb-2">Cập nhật trạng thái</h6>
+                    <div class="form-group">
+                        <select class="form-control" id="statusSelect">
+
+                            <!-- Options will be injected here by jQuery -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="card-title m-0 mb-2">Đơn vị vận chuyển</h6>
+                    <div class="form-group">
+                        <select class="form-control mb-2" id="shippingBrand">
+                            <option>Chọn đơn vị vận chuyển</option>
+                            <option value="GHN">Giao hàng nhanh</option>
+                            <option value="SPX">Shopee Express</option>
+                            <option value="Grab">Grab</option>
+                            <option value="Ahamove">Ahamove</option>
+                        </select>
+                        <input type="hidden" name="shipping_brand_hidden" id="shippingBrandHidden">
+
+                    </div>
+                    <input type="text" class="form-control" placeholder="Mã đơn hàng" id="trackingNumber">
+                    <input type="hidden" name="tracking_number_hidden" id="trackingNumberHidden">
+
+                </div>
+            </div>
+
+        </div>
     </div>
-    </div>
-    <script>
-        var orderStatus = "{{ $order->status }}"
-    </script>
-@endsection
+
+</div>
+<!-- / Content -->
